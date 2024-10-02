@@ -9,8 +9,8 @@ class	IRCMessage
 	private:
 		std::string	_prefix;
 		std::string	_command;
-		std::string	*_params;
-		std::string	_trailing;
+		//std::string	*_params;
+		//std::string	_trailing;
 	public:
 		IRCMessage(const std::string &buffer);
 		~IRCMessage();
