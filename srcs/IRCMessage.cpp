@@ -1,19 +1,21 @@
 #include "IRCMessage.hpp"
 
-void  IRCMessage::setPrefix(const std::string &prefix)
+void	IRCMessage::setPrefix(const std::string &prefix)
 {
-  _prefix = prefix;
+	_prefix = prefix;
 }
 
-void  IRCMessage::setCommand(const std::string &command)
+void	IRCMessage::setCommand(const std::string &command)
 {
-  _command = command;
+	_command = command;
 }
 
 IRCMessage::IRCMessage(int argc, char **argv)
 {
-  for (int i = 1; i < argc; ++i)
-  {
-
-  }
+	if (argc == 4)
+	{
+		setPrefix(std::string(argv[1]));
+		setCommand(std::string(argv[2]));
+		setTrailing(std::string(argv[3]));
+	}
 }
