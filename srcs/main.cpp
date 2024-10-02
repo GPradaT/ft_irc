@@ -2,7 +2,6 @@
 // socket programming
 #include <netinet/in.h>
 #include <cstring>
-#include <sstream>
 #include <iostream>
 #include <sys/socket.h>
 #include <sys/poll.h>
@@ -63,9 +62,9 @@ int main()
 				char buffer[1024] = { 0 };
 				int recVal = 0;
 				recVal = recv(_fds[i].fd, buffer, sizeof(buffer), 0);
-				std::cout << buffer << std::endl;
-				std::string new_buffer = buffer;
-				IRCMessage message(new_buffer);
+				std::cout << buffer << buffer[-2] << std::endl;
+				std::string str = buffer;
+				IRCMessage buffer(str);
 				//if (str.find("JOIN") != std::string::npos)
 				//{
 				//    if (!jaumein)
