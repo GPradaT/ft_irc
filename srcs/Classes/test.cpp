@@ -9,5 +9,4 @@ int main()
     Server::Singleton().addClientToChannel(client, chan);
     std::cout << "The first client of " << Server::Singleton().getChannelByName("test")->getChannelName()
     << " is " << (*Server::Singleton().getChannelByName("test")->getClientsFromChannel())[0]->getNickName() << std::endl;
-    //std::cout << "valor del singleton es " << Server::Singleton().getServerSocket() << std::endl;
 }
