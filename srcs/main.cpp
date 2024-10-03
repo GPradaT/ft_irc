@@ -11,8 +11,13 @@
 
 #include "../includes/IRCMessage.hpp"
 
-int main()
+int main(int argc, char *argv[])
 {
+	try {
+		IRCMessage::validInput(argc, argv);
+	} catch (...) {
+		return 1;
+	}
 	// creating socket
 	int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	std::vector<struct pollfd> _fds;

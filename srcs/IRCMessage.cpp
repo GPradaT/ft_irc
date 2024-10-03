@@ -1,5 +1,22 @@
 #include "../includes/IRCMessage.hpp"
 
+IRCMessage::IRCMessage(const std::string &buffer)
+{
+	std::stringstream	new_buffer(buffer);
+	std::string	token;
+	while (new_buffer >> token)
+	{
+		if (token[0] == ':')
+		{
+			setTrailing(new_buffer, token);
+			break;
+		}
+		_params.push_back(token);
+	}
+}
+
+IRCMessage::~IRCMessage() {}
+
 void  IRCMessage::setPrefix(const std::string &prefix)
 {
 	_prefix = prefix.substr(1);
@@ -24,18 +41,3 @@ void	IRCMessage::setTrailing(std::stringstream &new_buffer, const std::string &t
 		_trailing += " " + temp;
 }
 
-IRCMessage::IRCMessage(const std::string &buffer)
-{
-	std::stringstream	new_buffer(buffer);
-	std::string	token;
-	while (new_buffer >> token)
-	{
-		if (token[0] == ':')
-		{
-			setTrailing(new_buffer, token);
-			break;
-		}
-		_params.push_back(token);
-	}
-}
-IRCMessage::~IRCMessage() {}
