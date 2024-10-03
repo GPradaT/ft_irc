@@ -27,14 +27,7 @@ void	IRCMessage::setTrailing(std::stringstream &new_buffer, const std::string &t
 IRCMessage::IRCMessage(const std::string &buffer)
 {
 	std::stringstream	new_buffer(buffer);
-	std::string			token;
-	if (new_buffer >> token)
-	{
-		if (token[0] == ':')
-			setPrefix(token);
-		else
-			setCommand(token);
-	}
+	std::string	token;
 	while (new_buffer >> token)
 	{
 		if (token[0] == ':')
@@ -45,5 +38,4 @@ IRCMessage::IRCMessage(const std::string &buffer)
 		_params.push_back(token);
 	}
 }
-
 IRCMessage::~IRCMessage() {}
