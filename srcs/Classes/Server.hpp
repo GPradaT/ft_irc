@@ -1,3 +1,4 @@
+#pragma once
 #include "Channel.hpp"
 
 class Server{
@@ -16,6 +17,7 @@ class Server{
             static Server    instance;
             return instance;
         }
+        Server& operator+=(std::string const& chan);
         int initialize(const std::string &psswd, const unsigned short &port);
         void serverLoop();
         Channel* getChannelByName(const std::string &name);
@@ -31,6 +33,7 @@ class Server{
         int addClientToChannel(Client *client, Channel *channel);
         int moveClientFromToChannel(Client *client, Channel *from, Channel *to);
         Channel *getChannelByClient(Client *client);
+        int removeClientFromChannel(Client *client, Channel *channel);
 
     Server();
     ~Server();

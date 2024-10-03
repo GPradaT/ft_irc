@@ -1,3 +1,4 @@
+#include "Server.hpp"
 #include "Channel.hpp"
 
 Channel::Channel()
@@ -8,6 +9,20 @@ Channel::Channel()
 Channel::~Channel()
 {
     
+}
+
+Channel& Channel::operator+=(Client const& cli)
+{
+    Channel *chan = Server::Singleton().getChannelByName(this->_name);
+    Server::Singleton().addClientToChannel((Client*)&cli, chan);
+    return *this;
+}
+
+Channel& Channel::operator-=(Client const& cli)
+{
+    Channel *chan = Server::Singleton().getChannelByName(this->_name);
+    Server::Singleton().removeClientFromChannel((Client*)&cli, chan);
+    return *this;
 }
 
 std::vector<Client*> *Channel::getClientsFromChannel()

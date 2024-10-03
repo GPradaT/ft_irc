@@ -31,6 +31,13 @@ void    Server::serverLoop()
 
 }
 
+Server& Server::operator+=(std::string const& chanName)
+{
+    if (getChannelByName(chanName) == nullptr)
+        createChannel(chanName);
+    return *this;
+}
+
 Channel    *Server::getChannelByName(const std::string &name)
 {
     for (int i = 0; i < this->_channels.size(); i++)
@@ -159,4 +166,40 @@ Channel *Server::getChannelByClient(Client *client)
         }
     }
     return nullptr;
+}
+
+int Server::removeClientFromChannel(Client *client, Channel *channel)
+{
+    if (client != nullptr)
+    {
+        std::vector<Client*> *clients = channel->getClientsFromChannel();
+        auto it = std::find(begin(*clients), end(*clients), client);
+        for (int i = 0; i < (*clients).size(); i++)
+        {
+            if ((*clients)[i] == client)
+            {
+                (*clients)[i] = nullptr;
+                break;
+            }
+        }
+        if (it != (*clients).end())
+            (*clients).erase(std::remove((*clients).begin(), (*clients).end(), nullptr), (*clients).end());
+        if (client->isAdmin())
+        {
+            std::vector<Client*> *admins = channel->getAdmins();
+            auto it = std::find(begin(*admins), end(*admins), client);
+            for (int i = 0; i < (*admins).size(); i++)
+            {
+                if ((*admins)[i] == client)
+                {
+                    (*admins)[i] = nullptr;
+                    break;
+                }
+            }
+            if (it != (*admins).end())
+                (*admins).erase(std::remove((*admins).begin(), (*admins).end(), nullptr), (*admins).end());
+        }
+        return 0;
+    }
+    return -1;
 }
