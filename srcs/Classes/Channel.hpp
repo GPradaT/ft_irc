@@ -5,12 +5,12 @@ class Channel{
         std::vector<Client*>      _admins;
         std::string               _name;
     public:
-        std::vector<Client*>  getClientsFromChannel();
+        std::vector<Client*>  *getClientsFromChannel();
         Client*               getClientByNickName(std::string name);
         Client*               getClientByRealName(std::string name);
         struct pollfd         *getClientFd(Client* client);
         std::string           getChannelName();
-        std::vector<Client*>  getAdmins();
+        std::vector<Client*>  *getAdmins();
         void                  setName(const std::string &name);
     Channel();
     ~Channel();

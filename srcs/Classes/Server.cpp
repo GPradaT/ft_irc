@@ -122,10 +122,10 @@ int Server::addClientToChannel(Client *client, Channel *channel)
 {
     if (client != nullptr)
     {
-        channel->getClientsFromChannel().push_back(client);
+        (*channel->getClientsFromChannel()).push_back(client);
         if (client->isAdmin())
         {
-            channel->getAdmins().push_back(client);
+            (*channel->getAdmins()).push_back(client);
         }
         return 0;
     }
@@ -136,26 +136,12 @@ int Server::moveClientFromToChannel(Client *client, Channel *from, Channel *to)
 {
     if (client != nullptr)
     {
-        for (int i = 0; i < from->getClientsFromChannel().size(); i++)
-        {
-            if (client == from->getClientsFromChannel()[i])
-            {
-                from->getClientsFromChannel().erase(i);
-                break;
-            }
-        }
-        to->getClientsFromChannel().push_back(client);
+        (*from->getClientsFromChannel()).erase(std::find(begin(*from->getClientsFromChannel()), end(*from->getClientsFromChannel()), client));
+        (*to->getClientsFromChannel()).push_back(client);
         if (client->isAdmin())
         {
-            for (int i = 0; i < from->getAdmins().size(); i++)
-            {
-                if (client == from->getAdmins()[i])
-                {
-                    from->getAdmins().erase(i);
-                    break;
-                }
-            }
-            to->getAdmins().push_back(client);
+            (*from->getAdmins()).erase(std::find(begin(*from->getAdmins()), end(*from->getAdmins()), client));
+            (*to->getAdmins()).push_back(client);
         }
         return 0;
     }
@@ -166,9 +152,9 @@ Channel *Server::getChannelByClient(Client *client)
 {
     for (int i = 0; i < this->_channels.size(); i++)
     {
-        for (int j = 0; j < this->_channels[i].getClientsFromChannel().size(); j++)
+        for (int j = 0; j < (*this->_channels[i].getClientsFromChannel()).size(); j++)
         {
-            if (this->_channels[i].getClientsFromChannel()[j] == client)
+            if ((*this->_channels[i].getClientsFromChannel())[j] == client)
                 return &this->_channels[i];
         }
     }

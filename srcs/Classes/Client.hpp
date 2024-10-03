@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <vector>
+#include <algorithm>
+
 class Client{
     private:
         std::string           _nick;
