@@ -1,23 +1,30 @@
 NAME	=	ircserv
 
-FILES	=	main
+FILES	=	IRCMessage main
 
-SRCS	=	$(addsuffix .cpp $(FILES))
-OBJS	=	$(SRC:.c=.o)
+SRCS	=	$(addsuffix .cpp, $(FILES))
+OBJS	=	$(addprefix objs/, $(SRCS:.cpp=.o))
 
-vpath %.cpp srcs
+vpath %.cpp srcs/
 
-CXX		=	c++ -std=c++98 -Wall -Wextra -Werror -g -fsanitize=address
+CXX		=	c++ -std=c++98 #-Wall -Wextra -Werror -g -fsanitize=address
 
 all: $(NAME)
 
+objs:
+	mkdir -p objs
+
 $(NAME): $(OBJS)
 	$(CXX) -o $(NAME) $(OBJS)
+
+objs/%.o: srcs/%.cpp | objs
+	$(CXX) -c $< -o $@
 
 clean:
 	rm -rf $(OBJS)
 
 fclean: clean
+	rm -rf $(NAME) objs
 
 re: fclean all
 
