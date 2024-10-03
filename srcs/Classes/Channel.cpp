@@ -10,14 +10,14 @@ Channel::~Channel()
     
 }
 
-std::vector<Client*> Channel::getClientsFromChannel()
+std::vector<Client*> *Channel::getClientsFromChannel()
 {
-    return this->_clients;
+    return &this->_clients;
 }
 
-std::vector<Client*> Channel::getAdmins()
+std::vector<Client*> *Channel::getAdmins()
 {
-    return this->_admins;
+    return &this->_admins;
 }
 
 Client *Channel::getClientByNickName(std::string name)
