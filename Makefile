@@ -1,26 +1,25 @@
-NAME= ircServer
-CC-= g++
-CFLAGS= -Wall -Wextra -Werror -std=c++98
-SRC= src/main.cpp src/ircServer.cpp src/Client.cpp
-INCLUDES = includes/ircServer.hpp includes/Client.hpp
-OBJ= $(SRC:.cpp=.o)
-LDFLAGS= -lstdc++
+NAME= ircserv
+CC= g++
+CFLAGS= -std=c++11
+SRC = src/Client.cpp src/Channel.cpp src/Server.cpp src/main.cpp
+OBJ = $(SRC:.cpp=.o)
+INCLUDES= includes/Client.hpp includes/Channel.hpp includes/Server.hpp
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(INCLUDES)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LDFLAGS)
 
-%.o: %.cpp
+$(NAME): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+
+%.o: %.cpp $(INCLUDES)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJ)
+	rm -f $(NAME)
 
 fclean: clean
-	rm -rf $(NAME)
+	rm -rf $(OBJ)
 
 re: fclean all
 
 .PHONY: all clean fclean re
-

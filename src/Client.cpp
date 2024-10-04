@@ -1,61 +1,51 @@
 #include "../includes/Client.hpp"
 
-Client::Client() {
-  std::cout << "Client created with default constructor" << std::endl;
-}
-
-Client::Client(const Client &obj)
+Client::Client()
 {
-  std::cout << "Client created with copy constructor" << std::endl;
-  *this = obj;
-}
 
-Client& Client::operator=(const Client &obj)
-{
-  std::cout << "Client created with copy assignment operator" << std::endl;
-  if (this == &obj)
-  {
-    this->name = obj.name;
-    this->username = obj.username;
-    this->password = obj.password;
-  } 
-  return *this;
 }
 
 Client::~Client()
 {
-  std::cout << "Client has been destroyed" << std::endl;
+
 }
 
-void Client::setName(std::string name)
+std::string Client::getNickName()
 {
-  this->name = name;
-  std::cout << "Name has been set to " << name << std::endl;
+    return this->_nick;
 }
 
-void Client::setUsername(std::string username)
+std::string Client::getRealName()
 {
-  this->username = username;
-  std::cout << "Username has been set to " << username << std::endl;
+    return this->_real;
 }
 
-void Client::setPassword(std::string password)
+bool    Client::isAdmin()
 {
-  this->password = password;
-  std::cout << "Password has been set " << std::endl;
+    return this->_isAdmin;
 }
 
-std::string Client::getName()
+struct pollfd   *Client::getFd()
 {
-  return this->name;
+    return this->_fd;
 }
 
-std::string Client::getUsername()
+void    Client::setFd(struct pollfd *fd)
 {
-  return this->username;
+    this->_fd = fd;
 }
 
-std::string Client::getPassword()
+void    Client::setNick(const std::string &name)
 {
-  return this->password;
+    this->_nick = name;
+}
+
+void    Client::setReal(const std::string &name)
+{
+    this->_real = name;
+}
+
+void    Client::setAdmin(bool admin)
+{
+    this->_isAdmin;
 }
