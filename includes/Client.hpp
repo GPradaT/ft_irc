@@ -1,15 +1,25 @@
-#pragma once
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
 
+#include <iostream>
 #include <string>
 
-Class  Client
-{
-  private:
-    std::string  _nickname;
-    std::string  _username;
-    int          fd;
-
+class Client {
   public:
-    std::string  getNickname() const;
-    std::string  getUsername() const;
+    Client();
+    Client(const Client &obj);
+    Client& operator=(const Client &obj);
+    ~Client();
+    void setName(std::string name);
+    void setUsername(std::string username);
+    void setPassword(std::string password);
+    std::string getName();
+    std::string getUsername();
+    std::string getPassword();
+
+  private:
+    std::string name;
+    std::string username;
+    std::string password;
 };
+#endif 
