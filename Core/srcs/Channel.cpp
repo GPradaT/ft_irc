@@ -1,14 +1,13 @@
-#include "Server.hpp"
-#include "Channel.hpp"
+#include "../includes/Channel.hpp"
 
 Channel::Channel()
 {
-    
+
 }
 
 Channel::~Channel()
 {
-    
+
 }
 
 Channel& Channel::operator+=(Client const& cli)
@@ -30,9 +29,9 @@ std::vector<Client*> *Channel::getClientsFromChannel()
     return &this->_clients;
 }
 
-std::vector<Client*> *Channel::getAdmins()
+std::vector<Client*> *Channel::getOperators()
 {
-    return &this->_admins;
+    return &this->_operators;
 }
 
 Client *Channel::getClientByNickName(std::string name)

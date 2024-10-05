@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../includes/Server.hpp"
 
 Server::Server()
 {
@@ -132,7 +132,7 @@ int Server::addClientToChannel(Client *client, Channel *channel)
         (*channel->getClientsFromChannel()).push_back(client);
         if (client->isAdmin())
         {
-            (*channel->getAdmins()).push_back(client);
+            (*channel->getOperators()).push_back(client);
         }
         return 0;
     }
@@ -147,8 +147,8 @@ int Server::moveClientFromToChannel(Client *client, Channel *from, Channel *to)
         (*to->getClientsFromChannel()).push_back(client);
         if (client->isAdmin())
         {
-            (*from->getAdmins()).erase(std::find(begin(*from->getAdmins()), end(*from->getAdmins()), client));
-            (*to->getAdmins()).push_back(client);
+            (*from->getOperators()).erase(std::find(begin(*from->getOperators()), end(*from->getOperators()), client));
+            (*to->getOperators()).push_back(client);
         }
         return 0;
     }
@@ -186,7 +186,7 @@ int Server::removeClientFromChannel(Client *client, Channel *channel)
             (*clients).erase(std::remove((*clients).begin(), (*clients).end(), nullptr), (*clients).end());
         if (client->isAdmin())
         {
-            std::vector<Client*> *admins = channel->getAdmins();
+            std::vector<Client*> *admins = channel->getOperators();
             auto it = std::find(begin(*admins), end(*admins), client);
             for (int i = 0; i < (*admins).size(); i++)
             {
