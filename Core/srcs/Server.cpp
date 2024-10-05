@@ -130,7 +130,7 @@ int Server::addClientToChannel(Client *client, Channel *channel)
     if (client != nullptr)
     {
         (*channel->getClientsFromChannel()).push_back(client);
-        if (client->isAdmin())
+        if (client->isOperator())
         {
             (*channel->getOperators()).push_back(client);
         }
@@ -145,7 +145,7 @@ int Server::moveClientFromToChannel(Client *client, Channel *from, Channel *to)
     {
         (*from->getClientsFromChannel()).erase(std::find(begin(*from->getClientsFromChannel()), end(*from->getClientsFromChannel()), client));
         (*to->getClientsFromChannel()).push_back(client);
-        if (client->isAdmin())
+        if (client->isOperator())
         {
             (*from->getOperators()).erase(std::find(begin(*from->getOperators()), end(*from->getOperators()), client));
             (*to->getOperators()).push_back(client);
@@ -184,7 +184,7 @@ int Server::removeClientFromChannel(Client *client, Channel *channel)
         }
         if (it != (*clients).end())
             (*clients).erase(std::remove((*clients).begin(), (*clients).end(), nullptr), (*clients).end());
-        if (client->isAdmin())
+        if (client->isOperator())
         {
             std::vector<Client*> *admins = channel->getOperators();
             auto it = std::find(begin(*admins), end(*admins), client);
