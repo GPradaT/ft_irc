@@ -1,11 +1,11 @@
 #include "../includes/IRCMessage.hpp"
 
-void  IRCMessage::setPrefix(const std::string &prefix)
+void	IRCMessage::setPrefix(const std::string &prefix)
 {
 	_prefix = prefix.substr(1);
 }
 
-void  IRCMessage::setCommand(const std::string &command)
+void	IRCMessage::setCommand(const std::string &command)
 {
 	_command = command;
 }

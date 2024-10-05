@@ -1,10 +1,6 @@
 #pragma once
 
-#include <sstream>
-#include <iostream>
-#include <string>
-
-#include <vector>
+#include "../../Headers.h"
 
 class	IRCMessage
 {
@@ -23,10 +19,10 @@ class	IRCMessage
 		void	setParams(std::vector<std::string> &params);
 		void	setTrailing(std::stringstream &new_buffer, const std::string &trailing);
 
-		//std::string	&getPrefix() const;
-		//std::string	&getCommand() const;
-		//std::vector	&getParams() const;
-		//std::string	&getTrailing() const;
+		std::string					&getPrefix() const;
+		std::string					&getCommand() const;
+		std::vector<std::string>	&getParams() const;
+		std::string					&getTrailing() const;
 
 		void		print() const;
 };

@@ -1,6 +1,7 @@
 NAME	=	ircserv
 
-FILES	=	IRCMessage main
+FILES	=	IRCMessage Client Server Channel main
+HEADERS	=	IRCMessage Server Channel Client
 
 SRCS	=	$(addsuffix .cpp, $(FILES))
 OBJS	=	$(addprefix objs/, $(SRCS:.cpp=.o))

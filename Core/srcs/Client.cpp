@@ -1,4 +1,4 @@
-#include "Client.hpp"
+#include "../includes/Client.hpp"
 
 Client::Client()
 {
@@ -20,9 +20,9 @@ std::string Client::getRealName()
     return this->_real;
 }
 
-bool    Client::isAdmin()
+bool    Client::isOperator()
 {
-    return this->_isAdmin;
+    return this->_isOperator;
 }
 
 struct pollfd   *Client::getFd()
@@ -47,5 +47,5 @@ void    Client::setReal(const std::string &name)
 
 void    Client::setAdmin(bool admin)
 {
-    this->_isAdmin;
+    this->_isOperator;
 }
