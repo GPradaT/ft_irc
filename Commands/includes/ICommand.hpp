@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../Headers.h"
+#include "../../Headers.h"
 
 class	ICommand
 {
 	public:
 		virtual	~ICommand();
 
-		virtual void	execute(Server *Server, Client *Client) = 0;
-		virtual bool	validate(IRCMessage &Message) = 0;
+		virtual void	execute() = 0;
+		virtual bool	validate(IRCMessage *message) = 0;
 };
 
 ICommand::~ICommand()

@@ -5,12 +5,12 @@
 class	AuthenticationCommand : public ICommand
 {
 	protected:
-		bool		_isClientRegistered(Client *Client);
+		bool		_isClientRegistered();
 
 	public:
 		virtual	~AuthenticationCommand();
 
-		virtual void	execute(Server *Server, Client *Client) = 0;
-		virtual bool	validate(IRCMessage &Message) = 0;
+		virtual void	execute() = 0;
+		virtual bool	validate() = 0;
 	// Comandos de autenticación: PASS, NICK, USER
 };
