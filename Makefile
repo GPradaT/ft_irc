@@ -1,9 +1,9 @@
 NAME= ircserv
 CC= g++
 CFLAGS= -std=c++11
-SRC = src/Client.cpp src/Channel.cpp src/Server.cpp src/main.cpp
+SRC = Core/src/Client.cpp Core/src/Channel.cpp Core/src/Server.cpp Core/src/main.cpp
 OBJ = $(SRC:.cpp=.o)
-INCLUDES= includes/Client.hpp includes/Channel.hpp includes/Server.hpp
+INCLUDES= Core/includes/Client.hpp Core/includes/Channel.hpp Core/includes/Server.hpp
 
 all: $(NAME)
 
@@ -18,7 +18,7 @@ clean:
 	rm -f $(NAME)
 
 fclean: clean
-	rm -rf $(OBJ)
+	rm -rf $(OBJ) .vscode
 
 re: fclean all
 

@@ -6,7 +6,10 @@ private:
     std::vector<struct pollfd> _fds;
     std::vector<Channel> _channels;
     std::vector<Client> _clients;
+    struct pollfd _newFd;
+    int _pollCount;
     int _serverSocket;
+    int _newSocket;
     std::string _passwd;
     unsigned short _port;
     bool _endServer;
@@ -16,7 +19,8 @@ public:
     Server();
     ~Server();
 
-    static Server& Singleton() {
+    static Server& Singleton()
+    {
         static Server instance;
         return instance;
     }

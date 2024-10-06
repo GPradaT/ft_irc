@@ -47,54 +47,48 @@ int Server::initialize(const std::string &psswd, const unsigned short &port)
 
 void Server::serverLoop()
 {
-    while (!this->_endServer)
-    {
-        int pollCount = poll(this->_fds.data(), this->_fds.size(), -1);
+    createChannel("general");
+    createClient("user1", "User One", nullptr);
 
-        if (pollCount == -1) {
+    while (!_endServer)
+    {
+        _pollCount = poll(_fds.data(), _fds.size(), -1);
+        if (_pollCount < 0)
+        {
             std::cerr << "Poll error" << std::endl;
             break;
         }
-
-        for (size_t i = 0; i < this->_fds.size(); ++i)
+        for (size_t i = 0; i < _fds.size(); ++i)
         {
-            if (this->_fds[i].revents & POLLIN)
+            if (_fds[i].revents & POLLIN)
             {
-                if (this->_fds[i].fd == this->_serverSocket)
+                if (_fds[i].fd == _serverSocket)
                 {
-                    struct sockaddr_in clientAddress;
-                    socklen_t clientAddressLen = sizeof(clientAddress);
-                    int clientSocket = accept(this->_serverSocket, \
-                    (struct sockaddr*)&clientAddress, &clientAddressLen);
-
-                    if (clientSocket == -1)
+                    // Handle new connection
+                    _newSocket = accept(_serverSocket, nullptr, nullptr);
+                    if (_newSocket < 0)
                     {
                         std::cerr << "Accept error" << std::endl;
                         continue;
                     }
-
-                    struct pollfd clientFd;
-                    clientFd.fd = clientSocket;
-                    clientFd.events = POLLIN;
-                    this->_fds.push_back(clientFd);
-                    this->createClient("nick", "real", &this->_fds.back());
+                    _newFd.fd = _newSocket;
+                    _newFd.events = POLLIN;
+                    _fds.push_back(_newFd);
                 }
-                // SEGUN TENGO ENTENDIDO TRABAJAIS DESDE AQUI. DE MOMENTO METO LO QUE TENIA EN MI TEST.
-                else 
+                else
                 {
                     char buffer[1024];
-                    int bytesRead = recv(this->_fds[i].fd, buffer, sizeof(buffer), 0);
+                    int bytesRead = recv(_fds[i].fd, buffer, sizeof(buffer), 0);
                     if (bytesRead <= 0)
                     {
-                        close(this->_fds[i].fd);
-                        this->_fds.erase(this->_fds.begin() + i);
+                        close(_fds[i].fd);
+                        _fds.erase(_fds.begin() + i);
                         --i;
                     }
                     else
                     {
                         buffer[bytesRead] = '\0';
-                        std::string msg(buffer);
-                        std::cout << "Received message: " << msg << std::endl;
+                        std::cout << "Received message: " << buffer << std::endl;
                     }
                 }
             }
