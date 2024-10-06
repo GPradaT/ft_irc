@@ -8,8 +8,8 @@ class	AuthUserCmd : public AuthenticationCommand
 		AuthUserCmd();
 		~AuthUserCmd();
 
-		void	execute(Server *Server, Client *Client);
-		bool	validate(IRCMessage &Message);
+		void	execute();
+		bool	validate();
 	// Comando USER
 };
 
@@ -19,7 +19,7 @@ USER <user> <mode> <unused> :<realname>
 
 	<user> será el nombre de usuario
 	<mode> se usa para especificar el modo de usuario, en principio no se usa, en
-		el caso de que si, se usa 0 y 8 que es para setear el modo inivsibler del usuario
+		el caso de que si, se usa 0 y 8 que es para setear el modo inivsible del usuario
 	<unused> suele ser un '*' en la mayoría de los casos, se ignora
 	<realname> es el nombre real del usuario, suele ir precedido de : así que en el
 		IRCMessage se debería quedar guardado en el parámetro _trailing

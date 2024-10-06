@@ -9,6 +9,7 @@ class	IRCMessage
 		std::string					_command;
 		std::string					_trailing;
 		std::vector<std::string>	_params;
+		std::string					_outputCommand;
 
 	public:
 		IRCMessage(const std::string &buffer);
