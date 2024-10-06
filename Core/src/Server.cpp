@@ -48,7 +48,6 @@ int Server::initialize(const std::string &psswd, const unsigned short &port)
 void Server::serverLoop()
 {
     createChannel("general");
-    createClient("user1", "User One", nullptr);
 
     while (!_endServer)
     {
@@ -74,6 +73,7 @@ void Server::serverLoop()
                     _newFd.fd = _newSocket;
                     _newFd.events = POLLIN;
                     _fds.push_back(_newFd);
+                    // createClient("user1", "User One", nullptr);
                 }
                 else
                 {
