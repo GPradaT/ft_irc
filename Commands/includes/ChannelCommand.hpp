@@ -4,9 +4,6 @@
 
 class	ChannelCommand : public ICommand
 {
-	protected:
-		bool	_isChannelOperator();
-
 	public:
 		virtual	~ChannelCommand();
 
