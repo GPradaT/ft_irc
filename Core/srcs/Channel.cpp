@@ -1,8 +1,9 @@
 #include "../includes/Channel.hpp"
-
+#include "../includes/Server.hpp"
 Channel::Channel()
 {
-
+    this->_limit = -1;
+    this->_key = 0;
 }
 
 Channel::~Channel()
@@ -41,7 +42,7 @@ Client *Channel::getClientByNickName(std::string name)
         if (this->_clients[i]->getNickName() == name)
             return this->_clients[i];
     }
-    return nullptr;
+    return 0;
 }
 
 Client *Channel::getClientByRealName(std::string name)
@@ -51,7 +52,7 @@ Client *Channel::getClientByRealName(std::string name)
         if (this->_clients[i]->getRealName() == name)
             return this->_clients[i];
     }
-    return nullptr;
+    return 0;
 }
 
 struct pollfd *Channel::getClientFd(Client* client)
@@ -61,7 +62,7 @@ struct pollfd *Channel::getClientFd(Client* client)
         if (this->_clients[i] == client)
             this->_clients[i]->getFd();
     }
-    return nullptr;
+    return 0;
 }
 
 std::string Channel::getChannelName()

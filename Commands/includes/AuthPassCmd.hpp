@@ -8,8 +8,8 @@ class	AuthPassCmd : public AuthenticationCommand
 		AuthPassCmd();
 		~AuthPassCmd();
 
-		void	execute();
-		bool	validate(); // Si la cantidad de Msg.params.size() > 1 entonces no es valido porque no puede tener espacios
+		void	execute(Client *client, IRCMessage const&message);
+		bool	validate(IRCMessage const&message); // Si la cantidad de Msg.params.size() > 1 entonces no es valido porque no puede tener espacios
 };
 
 /*

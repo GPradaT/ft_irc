@@ -17,13 +17,15 @@ class	Client
 		std::string		_real;
 		struct pollfd	*_fd;
 		bool			_isOperator;
-
+		bool			_isVerified;
 	public:
 		struct pollfd	*getFd();
 		std::string		getNickName();
 		std::string		getRealName();
 		bool			isOperator();
+		bool			isVerified();
 
+		void			setVerified();
 		void			setFd(struct pollfd *fd);
 		void			setNick(const std::string &name);
 		void			setReal(const std::string &name);

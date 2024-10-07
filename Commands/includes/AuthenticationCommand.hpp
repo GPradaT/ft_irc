@@ -8,9 +8,10 @@ class	AuthenticationCommand : public ICommand
 		bool		_isClientRegistered();
 
 	public:
-		virtual	~AuthenticationCommand();
+		AuthenticationCommand() {};
+		virtual ~AuthenticationCommand() {};
 
-		virtual void	execute() = 0;
-		virtual bool	validate() = 0;
+		virtual void	execute(Client *client, IRCMessage const&message) = 0;
+		virtual bool	validate(IRCMessage const&message) = 0;
 	// Comandos de autenticación: PASS, NICK, USER
 };

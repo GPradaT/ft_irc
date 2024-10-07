@@ -40,3 +40,13 @@ IRCMessage::IRCMessage(const std::string &buffer)
 	}
 }
 IRCMessage::~IRCMessage() {}
+
+std::string					IRCMessage::getCommand() const
+{
+	return this->_command;
+}
+
+std::vector<std::string>	IRCMessage::getParams() const
+{
+	return this->_params;
+}
