@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Channel.hpp"
+#include "IRCMessage.hpp"
+#include "../../Commands/includes/ICommand.hpp"
 #include <map>
 
 class	Server
@@ -15,7 +17,8 @@ class	Server
 		unsigned short				_port;
 		bool						_endServer;
 		sockaddr_in						_serverAddress;
-
+		struct pollfd   			*_currentFd;
+		std::map<std::string, ICommand*> _commands;
 	public:
 		static Server		&Singleton()
 		{
@@ -23,6 +26,9 @@ class	Server
 			return			instance;
 		}
 		Server&			operator+=(std::string const& chan);
+		Server&			operator-=(Client *client);
+		Server&			operator*=(IRCMessage const& msg);
+		struct pollfd  *operator[](int idx);
 
 		void			serverLoop();
 		int				getServerSocket();
@@ -32,20 +38,24 @@ class	Server
 		struct pollfd	*getClientFdByRealName(const std::string &name);
 		Client			*getClientByNickName(const std::string &name);
 		Client			*getClientByRealName(const std::string &name);
+		Client			*getClientByFd(struct pollfd *fd);
+		struct pollfd   *getCurrentFd();
+		int				getFdSize();
+		std::string		getPasswd();
 
 		int				sendMsg(Client* client, const std::string &msg);
 		int				sendMsgAll(const std::string &msg);
 
 		void			createChannel(const std::string &name);
-		void			createClient(const std::string &nick, const std::string &real, struct pollfd *fd);
+		void			createClient(const std::string &nick, const std::string &real, struct pollfd fd);
 
 		Channel			*getChannelByName(const std::string &name);
 		Channel			*getChannelByClient(Client *client);
 
 		int				addClientToChannel(Client *client, Channel *channel);
-		int				moveClientFromToChannel(Client *client, Channel *from, Channel *to);
 		int				removeClientFromChannel(Client *client, Channel *channel);
 
+		void			setCurrentFd(struct pollfd *current);
     Server();
     ~Server();
 };

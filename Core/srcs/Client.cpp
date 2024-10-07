@@ -2,7 +2,7 @@
 
 Client::Client()
 {
-
+    this->_isVerified = false;
 }
 
 Client::~Client()
@@ -18,6 +18,16 @@ std::string Client::getNickName()
 std::string Client::getRealName()
 {
     return this->_real;
+}
+
+bool    Client::isVerified()
+{
+    return this->_isVerified;
+}
+
+void    Client::setVerified()
+{
+    this->_isVerified = true;
 }
 
 bool    Client::isOperator()
@@ -45,7 +55,7 @@ void    Client::setReal(const std::string &name)
     this->_real = name;
 }
 
-void    Client::setAdmin(bool admin)
+void    Client::setAdmin(bool op)
 {
-    this->_isOperator;
+    this->_isOperator = op;
 }

@@ -1,8 +1,10 @@
 #include "../includes/Server.hpp"
 
+#include "../../Commands/includes/AuthNickCmd.hpp"
+
 Server::Server()
 {
-
+    this->_commands["NICK"] = new AuthNickCmd();
 }
 
 Server::~Server()
@@ -12,6 +14,7 @@ Server::~Server()
 
 int Server::initialize(const std::string &psswd, const unsigned short &port)
 {
+    std::cout << this->_fds.size();
     this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     this->_serverAddress.sin_family = AF_INET;
     this->_serverAddress.sin_port = htons(port);
@@ -33,9 +36,42 @@ void    Server::serverLoop()
 
 Server& Server::operator+=(std::string const& chanName)
 {
-    if (getChannelByName(chanName) == nullptr)
+    if (getChannelByName(chanName) == 0)
         createChannel(chanName);
     return *this;
+}
+
+Server& Server::operator-=(Client *client)
+{
+    //delete client
+    return *this;
+}
+
+Server&			Server::operator*=(IRCMessage const& msg)
+{
+    if (this->_commands.find(msg.getParams()[0]) != this->_commands.end())
+        this->_commands[msg.getParams()[0]]->validate(msg);
+    return *this;
+}
+
+struct pollfd *Server::operator[](int idx)
+{
+    return &this->_fds[idx];
+}
+
+std::string Server::getPasswd()
+{
+    return this->_passwd;    
+}
+
+struct pollfd   *Server::getCurrentFd()
+{
+    return this->_currentFd;    
+}
+
+void			Server::setCurrentFd(struct pollfd *current)
+{
+    this->_currentFd = current;
 }
 
 Channel    *Server::getChannelByName(const std::string &name)
@@ -45,7 +81,7 @@ Channel    *Server::getChannelByName(const std::string &name)
         if (this->_channels[i].getChannelName() == name)
             return &this->_channels[i];
     }
-    return (nullptr);
+    return (0);
 }
 
 struct pollfd    *Server::getClientFdByNickName(const std::string &name)
@@ -55,7 +91,7 @@ struct pollfd    *Server::getClientFdByNickName(const std::string &name)
         if (this->_clients[i].getNickName() == name)
             return this->_clients[i].getFd();
     }
-    return (nullptr);
+    return (0);
 }
 
 struct pollfd    *Server::getClientFdByRealName(const std::string &name)
@@ -65,7 +101,7 @@ struct pollfd    *Server::getClientFdByRealName(const std::string &name)
         if (this->_clients[i].getRealName() == name)
             return this->_clients[i].getFd();
     }
-    return (nullptr);
+    return (0);
 }
 
 Client*    Server::getClientByNickName(const std::string &name)
@@ -75,7 +111,7 @@ Client*    Server::getClientByNickName(const std::string &name)
         if (this->_clients[i].getNickName() == name)
             return &this->_clients[i];
     }
-    return (nullptr);
+    return (0);
 }
 
 Client*    Server::getClientByRealName(const std::string &name)
@@ -85,12 +121,27 @@ Client*    Server::getClientByRealName(const std::string &name)
         if (this->_clients[i].getRealName() == name)
             return &this->_clients[i];
     }
-    return (nullptr);
+    return (0);
+}
+
+Client			*Server::getClientByFd(struct pollfd *fd)
+{
+    for (int i = 0; i < this->_clients.size(); i++)
+    {
+        if (this->_clients[i].getFd() == fd)
+            return &this->_clients[i];
+    }
+    return (0);
 }
 
 int    Server::getServerSocket()
 {
     return this->_serverSocket;
+}
+
+int				Server::getFdSize()
+{
+    return this->_fds.size();
 }
 
 int Server::sendMsg(Client* client, const std::string &msg)
@@ -115,40 +166,25 @@ void Server::createChannel(const std::string &name)
     this->_channels.push_back(newChannel);
 }
 
-void Server::createClient(const std::string &nick, const std::string &real, struct pollfd *fd)
+void Server::createClient(const std::string &nick, const std::string &real, struct pollfd fd)
 {
     Client newClient;
     newClient.setNick(nick);
     newClient.setReal(real);
-    newClient.setFd(fd);
     newClient.setAdmin(false);
+    this->_fds.push_back(fd);
+    newClient.setFd(&this->_fds[this->_fds.size() - 1]);
     this->_clients.push_back(newClient);
 }
 
 int Server::addClientToChannel(Client *client, Channel *channel)
 {
-    if (client != nullptr)
+    if (client != 0)
     {
         (*channel->getClientsFromChannel()).push_back(client);
         if (client->isOperator())
         {
             (*channel->getOperators()).push_back(client);
-        }
-        return 0;
-    }
-    return -1;
-}
-
-int Server::moveClientFromToChannel(Client *client, Channel *from, Channel *to)
-{
-    if (client != nullptr)
-    {
-        (*from->getClientsFromChannel()).erase(std::find(begin(*from->getClientsFromChannel()), end(*from->getClientsFromChannel()), client));
-        (*to->getClientsFromChannel()).push_back(client);
-        if (client->isOperator())
-        {
-            (*from->getOperators()).erase(std::find(begin(*from->getOperators()), end(*from->getOperators()), client));
-            (*to->getOperators()).push_back(client);
         }
         return 0;
     }
@@ -165,39 +201,39 @@ Channel *Server::getChannelByClient(Client *client)
                 return &this->_channels[i];
         }
     }
-    return nullptr;
+    return 0;
 }
 
 int Server::removeClientFromChannel(Client *client, Channel *channel)
 {
-    if (client != nullptr)
+    if (client != 0)
     {
         std::vector<Client*> *clients = channel->getClientsFromChannel();
-        auto it = std::find(begin(*clients), end(*clients), client);
+        std::vector<Client*>::iterator it = std::find((*clients).begin(), (*clients).end(), client);
         for (int i = 0; i < (*clients).size(); i++)
         {
             if ((*clients)[i] == client)
             {
-                (*clients)[i] = nullptr;
+                (*clients)[i] = 0;
                 break;
             }
         }
         if (it != (*clients).end())
-            (*clients).erase(std::remove((*clients).begin(), (*clients).end(), nullptr), (*clients).end());
+            (*clients).erase(std::remove((*clients).begin(), (*clients).end(), (Client*)0), (*clients).end());
         if (client->isOperator())
         {
             std::vector<Client*> *admins = channel->getOperators();
-            auto it = std::find(begin(*admins), end(*admins), client);
+            std::vector<Client*>::iterator it2 = std::find((*admins).begin(), (*admins).end(), client);
             for (int i = 0; i < (*admins).size(); i++)
             {
                 if ((*admins)[i] == client)
                 {
-                    (*admins)[i] = nullptr;
+                    (*admins)[i] = 0;
                     break;
                 }
             }
-            if (it != (*admins).end())
-                (*admins).erase(std::remove((*admins).begin(), (*admins).end(), nullptr), (*admins).end());
+            if (it2 != (*admins).end())
+                (*admins).erase(std::remove((*admins).begin(), (*admins).end(), (Client*)0), (*admins).end());
         }
         return 0;
     }

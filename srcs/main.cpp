@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <vector>
 
-#include "../includes/IRCMessage.hpp"
+#include "../Core/includes/IRCMessage.hpp"
 
 int main()
 {
@@ -48,7 +48,7 @@ int main()
 			    continue;
 			if (_fds[i].fd == serverSocket)
 			{
-				tmp_fd = accept(serverSocket, nullptr, nullptr);
+				tmp_fd = accept(serverSocket, 0, 0);
 				if (tmp_fd < 0)
 					break;
 				struct pollfd clientfd;
@@ -65,27 +65,6 @@ int main()
 				std::cout << buffer << buffer[std::strlen(buffer) - 2] << std::endl;
 				std::string str = buffer;
 				IRCMessage message(str);
-
-
-
-
-				if (str.find("JOIN") != std::string::npos)
-				{
-				    if (!jaumein)
-				    {
-				        std::string response = ":Jaume!Jaume@localhost JOIN #test\r\n";
-				        send(_fds[i].fd,response.c_str(), response.length(), 0);
-				        jaumein = true;
-				    }
-				    else{
-				        std::string response = ":PEPITO!PEPITO@localhost JOIN #test\r\n";
-				        send(_fds[i].fd,response.c_str(), response.length(), 0);
-				    }
-				}
-				if (str.find("PRIVMSG") != std::string::npos){
-				    std::string response = ":Jaume!Jaume@localhost PRIVMSG #test :Hi everyone!\r\n";
-				    send(_fds[i].fd,response.c_str(), response.length(), 0);
-				}
 				memset(buffer,0,1024);
 			}
 		}

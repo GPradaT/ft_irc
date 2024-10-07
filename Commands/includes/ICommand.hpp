@@ -1,19 +1,18 @@
 #pragma once
 
-#include "../../Headers.h"
+#include "../../Core/includes/Channel.hpp"
+#include "../../Core/includes/Client.hpp"
+#include "../../Core/includes/IRCMessage.hpp"
 
 class	ICommand
 {
 	public:
-		virtual	~ICommand();
+		ICommand() {};
+		virtual ~ICommand() {};
 
-		virtual void	execute() = 0;
-		virtual bool	validate(IRCMessage *message) = 0;
+		virtual void	execute(Client *client, IRCMessage const&message) = 0;
+		virtual bool	validate(IRCMessage const& message) = 0;
 };
-
-ICommand::~ICommand()
-{
-}
 
 class ChannelCommand : public ICommand
 {

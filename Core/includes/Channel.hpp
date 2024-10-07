@@ -1,9 +1,6 @@
 #pragma once
 
-#include <vector>
-#include <string>
-
-#include "../../Headers.h"
+#include "Client.hpp"
 
 struct mode
 {
@@ -20,8 +17,8 @@ class	Channel
 		std::vector<Client*>	_clients;
 		std::vector<Client*>	_operators;
 		std::string				_name;
-		int						_limit = -1;
-		std::string				*_key = NULL;
+		int						_limit;
+		std::string				*_key;
 
 	public:
 		Channel&				operator+=(Client const& cli);

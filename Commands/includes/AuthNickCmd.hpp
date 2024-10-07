@@ -8,8 +8,8 @@ class	AuthNickCmd : public AuthenticationCommand
 		AuthNickCmd();
 		~AuthNickCmd();
 
-		void	execute();
-		bool	validate();
+		void	execute(Client *client, IRCMessage const&message);
+		bool	validate(IRCMessage const&message);
 };
 
 /*
