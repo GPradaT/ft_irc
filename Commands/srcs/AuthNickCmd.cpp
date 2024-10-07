@@ -21,11 +21,11 @@ bool AuthNickCmd::validate(IRCMessage const&message)
 {
 	struct pollfd *cliFd = Server::Singleton().getCurrentFd();
 	Client *client = Server::Singleton().getClientByFd(cliFd);
-	/*if (!client->isVerified())
+	if (!client->isVerified())
 	{
 		Server::Singleton().sendMsg(client, "ERROR :No password provided\r\n");
 		return false;
-	}*/
+	}
 	if (message.getParams()[1].empty())
 	{
 		Server::Singleton().sendMsg(client, "ERR_NONICKNAMEGIVEN :No nickname given\r\n");

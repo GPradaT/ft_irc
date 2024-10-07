@@ -11,10 +11,7 @@ AuthPassCmd::~AuthPassCmd()
 
 void AuthPassCmd::execute(Client *client, IRCMessage const&message)
 {
-	if (client->getNickName().empty())
-		client->setNick(message.getParams()[1]);
-	Server::Singleton().sendMsg(client, ":" + client->getNickName() + " NICK " + message.getParams()[1] + "\r\n");
-	client->setNick(message.getParams()[1]);
+	client->setVerified();
 }
 
 bool AuthPassCmd::validate(IRCMessage const&message)
@@ -23,7 +20,12 @@ bool AuthPassCmd::validate(IRCMessage const&message)
 	Client *client = Server::Singleton().getClientByFd(cliFd);
 	if (message.getParams()[1].empty())
 	{
-		Server::Singleton().sendMsg(client, "ERR_NONICKNAMEGIVEN :No nickname given\r\n");
+		Server::Singleton().sendMsg(client, "ERR_NONICKNAMEGIVEN :No nickname given\r\n"); //cambiar error
+		return false;
+	}
+	if (message.getParams()[1] != Server::Singleton().getPasswd())
+	{
+		Server::Singleton().sendMsg(client, "ERR_NONICKNAMEGIVEN :No nickname given\r\n"); //cambiar error
 		return false;
 	}
 	execute(client, message);

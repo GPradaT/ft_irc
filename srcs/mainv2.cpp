@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     			while(std::getline(ss,line,'\n'))
 				{
 					IRCMessage message(line);
-					if (message.getIsValid())
+					//if (message.getIsValid())
 						Server::Singleton() *= message;
     			}
 				memset(buffer,0,1024);
