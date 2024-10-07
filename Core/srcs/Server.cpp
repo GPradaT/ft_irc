@@ -1,10 +1,12 @@
 #include "../includes/Server.hpp"
 
 #include "../../Commands/includes/AuthNickCmd.hpp"
+#include "../../Commands/includes/AuthPassCmd.hpp"
 
 Server::Server()
 {
     this->_commands["NICK"] = new AuthNickCmd();
+    this->_commands["PASS"] = new AuthPassCmd();
 }
 
 Server::~Server()
