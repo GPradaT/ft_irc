@@ -2,15 +2,16 @@
 
 #include "ICommand.hpp"
 
-class	MessageCommand : public ICommand
+class MessageCommand : public ICommand
 {
-	protected:
-		void	sendToUser();
-		void	sendToChannel();
+protected:
+    void sendToUser();
+    void sendToChannel();
 
-	public:
-		virtual	~MessageCommand();
+public:
+    MessageCommand();
+    virtual ~MessageCommand();
 
-		virtual void	execute() = 0;
-		virtual bool	validate() = 0;
+    virtual void execute(Client *client, IRCMessage const &message) = 0;
+    virtual bool validate(IRCMessage const &message) = 0;
 };

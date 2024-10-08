@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Client.hpp"
+#include <vector>
+#include <string>
+
+#include "../../Headers.h"
 
 struct mode
 {
@@ -15,14 +18,15 @@ class	Channel
 {
 	private:
 		std::vector<Client*>	_clients;
+		std::vector<Client*>	_admins;
 		std::vector<Client*>	_operators;
 		std::string				_name;
-		int						_limit;
-		std::string				*_key;
+		int						_limit = -1;
+		std::string				*_key = NULL;
 
 	public:
-		Channel&				operator+=(Client *cli);
-		Channel&				operator-=(Client *cli);
+		Channel&				operator+=(Client const& cli);
+		Channel&				operator-=(Client const& cli);
 
 		std::vector<Client*>	*getClientsFromChannel();
 		Client*					getClientByNickName(std::string name);
@@ -31,6 +35,7 @@ class	Channel
 
 		std::string				getChannelName();
 		std::vector<Client*>	*getOperators();
+		std::vector<Client*> 	*getAdmins();
 
 		void					setName(const std::string &name);
 	Channel();

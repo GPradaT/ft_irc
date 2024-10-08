@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../Core/includes/Server.hpp"
 #include "MessageCommand.hpp"
 
 class	MsgPrivmsgCmd : public MessageCommand
@@ -9,8 +8,8 @@ class	MsgPrivmsgCmd : public MessageCommand
 		MsgPrivmsgCmd();
 		~MsgPrivmsgCmd();
 
-		void execute(Client *client, IRCMessage const &message);
-		bool validate(IRCMessage const &message);
+		void	execute();
+		bool	validate();
 };
 
 /*
