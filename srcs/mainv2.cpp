@@ -45,13 +45,14 @@ int main(int argc, char *argv[])
 				recVal = recv(Server::Singleton()[i]->fd, buffer, sizeof(buffer), 0);
 				std::cout << buffer << std::endl;
 				std::string str = buffer;
-				std::stringstream ss(str);  
+				std::stringstream ss(str);
     			std::string line;
     			while(std::getline(ss,line,'\n'))
 				{
 					IRCMessage message(line);
+					message.print();
 					//if (message.getIsValid())
-						Server::Singleton() *= message;
+						//Server::Singleton() *= message;
     			}
 				memset(buffer,0,1024);
 			}

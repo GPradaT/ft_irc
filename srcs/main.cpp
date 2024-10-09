@@ -13,11 +13,6 @@
 
 int main(int argc, char *argv[])
 {
-	try {
-		IRCMessage::validInput(argc, argv);
-	} catch (...) {
-		return 1;
-	}
 	// creating socket
 	int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	std::vector<struct pollfd> _fds;
@@ -70,6 +65,7 @@ int main(int argc, char *argv[])
 				std::cout << buffer << buffer[std::strlen(buffer) - 2] << std::endl;
 				std::string str = buffer;
 				IRCMessage message(str);
+				message.print();
 				memset(buffer,0,1024);
 			}
 		}
