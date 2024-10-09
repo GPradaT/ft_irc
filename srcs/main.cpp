@@ -11,7 +11,7 @@
 
 #include "../Core/includes/IRCMessage.hpp"
 
-int main()
+int main(int argc, char *argv[])
 {
 	// creating socket
 	int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -62,9 +62,10 @@ int main()
 				char buffer[1024] = { 0 };
 				int recVal = 0;
 				recVal = recv(_fds[i].fd, buffer, sizeof(buffer), 0);
-				std::cout << buffer << buffer[std::strlen(buffer) - 2] << std::endl;
+				//std::cout << buffer << buffer[std::strlen(buffer) - 2] << std::endl;
 				std::string str = buffer;
 				IRCMessage message(str);
+				message.print();
 				memset(buffer,0,1024);
 			}
 		}
