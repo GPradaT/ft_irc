@@ -3,6 +3,10 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <iostream>
+#include <cctype>
+
+
 
 class	IRCMessage
 {
@@ -33,4 +37,13 @@ class	IRCMessage
 		bool							isValidPrefix(const std::string &prefix);
 		bool							isValidMiddleParam(const std::string &param);
 		bool							isValidTrailingParam(const std::string &param);
+
+		bool							isAllAlpha(const std::string &str);
+		bool							isAllDigit(const std::string &str);
+
+		bool							isLetter(const char c) const;
+		bool							isDigit(const char c) const;
+		bool							isSpecial(const char c) const;
+		bool							isValidNickname(const std::string &nickname) const;
+		//bool							isUserChar(const char c) const;
 };
