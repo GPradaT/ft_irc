@@ -12,9 +12,9 @@ AuthNickCmd::~AuthNickCmd()
 void AuthNickCmd::execute(Client *client, IRCMessage const&message)
 {
 	if (client->getNickName().empty())
-		client->setNick(message.getParams()[1]);
-	Server::Singleton().sendMsg(client, ":" + client->getNickName() + " NICK " + message.getParams()[1] + "\r\n");
-	client->setNick(message.getParams()[1]);
+		client->setNick(message.getParams()[0]);
+	Server::Singleton().sendMsg(client, ":" + client->getNickName() + " NICK " + message.getParams()[0] + "\r\n");
+	client->setNick(message.getParams()[0]);
 }
 
 bool AuthNickCmd::validate(IRCMessage const&message)

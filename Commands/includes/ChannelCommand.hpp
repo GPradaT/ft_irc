@@ -5,8 +5,9 @@
 class	ChannelCommand : public ICommand
 {
 	public:
-		virtual	~ChannelCommand();
+		ChannelCommand() {};
+		virtual	~ChannelCommand() {};
 
-		virtual void	execute() = 0;
-		virtual bool	validate() = 0;
+		virtual void	execute(Client *client, IRCMessage const&message) = 0;
+		virtual bool	validate(IRCMessage const&message) = 0;
 };

@@ -1,16 +1,21 @@
 #include "../includes/Server.hpp"
 #include <signal.h>
 
+
 #include "../includes/IRCMessage.hpp"
 #include "../../Commands/includes/AuthNickCmd.hpp"
 #include "../../Commands/includes/AuthPassCmd.hpp"
 #include "../../Commands/includes/MsgPrivmsgCmd.hpp"
+#include "../../Commands/includes/ChnlJoinCmd.hpp"
+#include "../../Commands/includes/ChnlWhoCmd.hpp"
 
 Server::Server()
 {
     this->_commands["NICK"] = new AuthNickCmd();
     this->_commands["PASS"] = new AuthPassCmd();
     this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
+    this->_commands["JOIN"] = new ChnlJoinCmd();
+    this->_commands["WHO"] = new ChnlWhoCmd();
 }
 
 Server::~Server()
@@ -22,6 +27,8 @@ int Server::initialize(const std::string &psswd, const unsigned short &port)
 {
     std::cout << this->_fds.size();
     this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    int a;
+    setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &a, sizeof(int));
     this->_serverAddress.sin_family = AF_INET;
     this->_serverAddress.sin_port = htons(port);
     this->_serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -140,8 +147,8 @@ Server& Server::operator-=(struct pollfd *fd)
 
 Server&			Server::operator*=(IRCMessage const& msg)
 {
-    if (this->_commands.find(msg.getParams()[0]) != this->_commands.end())
-        this->_commands[msg.getParams()[0]]->validate(msg);
+    if (this->_commands.find(msg.getCommand()) != this->_commands.end())
+        this->_commands[msg.getCommand()]->validate(msg);
     return *this;
 }
 

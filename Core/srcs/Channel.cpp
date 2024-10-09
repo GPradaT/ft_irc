@@ -11,14 +11,14 @@ Channel::~Channel()
 
 }
 
-Channel& Channel::operator+=(Client *cli)
+Channel &Channel::operator+=(Client *cli)
 {
     Channel *chan = Server::Singleton().getChannelByName(this->_name);
     Server::Singleton().addClientToChannel(cli, chan);
     return *this;
 }
 
-Channel& Channel::operator-=(Client *cli)
+Channel &Channel::operator-=(Client *cli)
 {
     Channel *chan = Server::Singleton().getChannelByName(this->_name);
     Server::Singleton().removeClientFromChannel(cli, chan);
@@ -68,6 +68,14 @@ struct pollfd *Channel::getClientFd(Client* client)
 std::string Channel::getChannelName()
 {
     return this->_name;
+}
+
+void    Channel::sendToAll(const std::string &msg)
+{
+    for (int i = 0; i < this->_clients.size(); i++)
+    {
+        Server::Singleton().sendMsg(this->_clients[i], msg);
+    }
 }
 
 void    Channel::setName(const std::string &name)

@@ -21,8 +21,8 @@ class	Channel
 		std::string				*_key;
 
 	public:
-		Channel&				operator+=(Client *cli);
-		Channel&				operator-=(Client *cli);
+		Channel				&operator+=(Client *cli);
+		Channel				&operator-=(Client *cli);
 
 		std::vector<Client*>	*getClientsFromChannel();
 		Client*					getClientByNickName(std::string name);
@@ -32,6 +32,7 @@ class	Channel
 		std::string				getChannelName();
 		std::vector<Client*>	*getOperators();
 
+		void					sendToAll(const std::string &msg);
 		void					setName(const std::string &name);
 	Channel();
 	~Channel();
