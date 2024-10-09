@@ -1,12 +1,16 @@
 #include "../includes/Server.hpp"
+#include <signal.h>
 
+#include "../includes/IRCMessage.hpp"
 #include "../../Commands/includes/AuthNickCmd.hpp"
 #include "../../Commands/includes/AuthPassCmd.hpp"
+#include "../../Commands/includes/MsgPrivmsgCmd.hpp"
 
 Server::Server()
 {
     this->_commands["NICK"] = new AuthNickCmd();
     this->_commands["PASS"] = new AuthPassCmd();
+    this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
 }
 
 Server::~Server()
@@ -31,9 +35,67 @@ int Server::initialize(const std::string &psswd, const unsigned short &port)
     return 0;
 }
 
-void    Server::serverLoop()
+void closeall(int signum)
 {
+    // Handle signal to close all connections
+    std::cout << "Closing all connections..." << std::endl;
+    close(Server::Singleton().getServerSocket());
+    exit(signum);
+}
 
+void Server::serverLoop()
+{
+    signal(SIGINT, closeall);
+    int polVal, tmp_fd, counter;
+    while (1)
+    {
+        polVal = poll(Server::Singleton()[0], Server::Singleton().getFdSize(), -1);
+        std::cout << Server::Singleton().getFdSize() << std::endl;
+        Server::Singleton()[0]->events = POLLIN;
+        counter = Server::Singleton().getFdSize();
+        for (int i = 0; i < counter; i++)
+        {
+            Server::Singleton().setCurrentFd(Server::Singleton()[i]);
+            if (Server::Singleton()[i]->revents == 0)
+                continue;
+            if (Server::Singleton()[i]->fd == Server::Singleton().getServerSocket())
+            {
+                // Function to accept connection and create client
+                tmp_fd = accept(Server::Singleton().getServerSocket(), 0, 0);
+                if (tmp_fd < 0)
+                    continue;
+                struct pollfd clientfd;
+                clientfd.fd = tmp_fd;
+                clientfd.events = POLLIN;
+                Server::Singleton().createClient("", "", clientfd);
+                Server::Singleton()[0]->events = POLLOUT;
+            }
+            else
+            {
+                char buffer[1024] = {0};
+                int recVal = 0;
+                recVal = recv(Server::Singleton()[i]->fd, buffer, sizeof(buffer), 0);
+                std::cout << buffer << std::endl;
+                std::string str = buffer;
+                std::stringstream ss(str);
+                std::string line;
+                while (std::getline(ss, line, '\n'))
+                {
+                    IRCMessage message(line);
+                    // if (message.getIsValid())
+                    Server::Singleton() *= message;
+                    if (Server::Singleton()[i]->fd == -1)
+                    {
+                        Server::Singleton() -= Server::Singleton()[i];
+                        break;
+                    }
+                }
+                memset(buffer, 0, 1024);
+            }
+        }
+    }
+    // closing the socket.
+    close(Server::Singleton().getServerSocket());
 }
 
 Server& Server::operator+=(std::string const& chanName)
@@ -46,6 +108,33 @@ Server& Server::operator+=(std::string const& chanName)
 Server& Server::operator-=(Client *client)
 {
     //delete client
+    client->getFd()->fd = -1;
+    for (int i = 0; i < this->_channels.size(); i++)
+        this->_channels[i] -= client;
+    std::vector<Client>::iterator it = std::find(this->_clients.begin(), this->_clients.end(), *client);
+    if (it != this->_clients.end())
+    {
+        std::cout << "el viejo size de clients es " << this->_clients.size() << std::endl;
+        std::cout << "cliente encontrado y borrado" << std::endl;
+        this->_clients.erase(std::remove(this->_clients.begin(), this->_clients.end(), *client), this->_clients.end());
+        std::cout << "el nuevo size de clients es " << this->_clients.size() << std::endl;
+    }
+    return *this;
+}
+
+Server& Server::operator-=(struct pollfd *fd)
+{
+    std::vector<struct pollfd>::iterator it;
+    for (it = this->_fds.begin(); it < this->_fds.end(); it++)
+    {
+        if ((*it).fd == -1)
+        {
+            std::cout << "el viejo size de fds es " << this->_fds.size() << std::endl;
+            this->_fds.erase(it);
+            std::cout << "el nuevo size de fds es " << this->_fds.size() << std::endl;
+            break;
+        }
+    }
     return *this;
 }
 

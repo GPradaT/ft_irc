@@ -27,6 +27,7 @@ class	Server
 		}
 		Server&			operator+=(std::string const& chan);
 		Server&			operator-=(Client *client);
+		Server&			operator-=(struct pollfd *fd);
 		Server&			operator*=(IRCMessage const& msg);
 		struct pollfd  *operator[](int idx);
 

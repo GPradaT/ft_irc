@@ -1,20 +1,20 @@
 #pragma once
 
-#include "../../Core/includes/Server.hpp"
 #include "MessageCommand.hpp"
 
-class	MsgPrivmsgCmd : public MessageCommand
+class	MsgNoticeCmd : public MessageCommand
 {
 	public:
-		MsgPrivmsgCmd();
-		~MsgPrivmsgCmd();
+		MsgNoticeCmd();
+		~MsgNoticeCmd();
 
-		void execute(Client *client, IRCMessage const &message);
-		bool validate(IRCMessage const &message);
+		void	execute();
+		bool	validate();
 };
 
+
 /*
-	PRIVMSG <msgtarget> <text>
+	NOTICE <msgtarget> <text>
 		Se usa para enviar mensajes a otros usuarios, en principio no se usa para enviar mensajes a canales
 		pero si se puede usar para enviar mensajes a servicios, bots, etc.
 

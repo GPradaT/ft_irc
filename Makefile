@@ -1,31 +1,30 @@
-NAME	=	ircserv
+NAME= ircserv
+CC= g++
+CFLAGS= -std=c++98 -Wall -Wextra -Werror
+SRC = Core/srcs/Client.cpp Core/srcs/Channel.cpp Core/srcs/Server.cpp Core/srcs/main.cpp \
+Core/srcs/IRCMessage.cpp Commands/srcs/AuthNickCmd.cpp Commands/srcs/AuthPassCmd.cpp \
+Commands/srcs/MsgPrivmsgCmd.cpp Commands/srcs/MessageCommand.cpp
 
-FILES	=	IRCMessage Client Server Channel main
-HEADERS	=	IRCMessage Server Channel Client
-
-SRCS	=	$(addsuffix .cpp, $(FILES))
-OBJS	=	$(addprefix objs/, $(SRCS:.cpp=.o))
-
-vpath %.cpp srcs/
-
-CXX		=	c++ -std=c++98 #-Wall -Wextra -Werror -g -fsanitize=address
+OBJ = $(SRC:.cpp=.o)
+INCLUDES= Core/includes/Client.hpp Core/includes/Channel.hpp Core/includes/Server.hpp \
+Core/includes/IRCMessage.hpp Commands/includes/AuthNickCmd.hpp Commands/includes/AuthUserCmd.hpp \
+Commnds/includes/AuthPassCmd.hpp Commands/includes/AuthenticationCommand.hpp Commands/includes/MsgPrivmsgCmd.hpp \
+Commands/includes/MessageCommand.hpp
 
 all: $(NAME)
 
-objs:
-	mkdir -p objs
 
-$(NAME): $(OBJS)
-	$(CXX) -o $(NAME) $(OBJS)
+$(NAME): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
-objs/%.o: srcs/%.cpp | objs
-	$(CXX) -c $< -o $@
+%.o: %.cpp $(INCLUDES)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJS)
+	rm -f $(NAME)
 
 fclean: clean
-	rm -rf $(NAME) objs
+	rm -rf $(OBJ) .vscode
 
 re: fclean all
 

@@ -19,6 +19,8 @@ class	Client
 		bool			_isOperator;
 		bool			_isVerified;
 	public:
+		bool			operator==(const Client &n2);
+
 		struct pollfd	*getFd();
 		std::string		getNickName();
 		std::string		getRealName();

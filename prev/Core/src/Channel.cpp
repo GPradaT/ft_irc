@@ -1,27 +1,27 @@
-#include "../includes/Channel.hpp"
 #include "../includes/Server.hpp"
+#include "../includes/Channel.hpp"
+
 Channel::Channel()
 {
-    this->_limit = -1;
-    this->_key = 0;
+    
 }
 
 Channel::~Channel()
 {
-
+    
 }
 
-Channel& Channel::operator+=(Client *cli)
+Channel& Channel::operator+=(Client const& cli)
 {
     Channel *chan = Server::Singleton().getChannelByName(this->_name);
-    Server::Singleton().addClientToChannel(cli, chan);
+    Server::Singleton().addClientToChannel((Client*)&cli, chan);
     return *this;
 }
 
-Channel& Channel::operator-=(Client *cli)
+Channel& Channel::operator-=(Client const& cli)
 {
     Channel *chan = Server::Singleton().getChannelByName(this->_name);
-    Server::Singleton().removeClientFromChannel(cli, chan);
+    Server::Singleton().removeClientFromChannel((Client*)&cli, chan);
     return *this;
 }
 
@@ -30,9 +30,9 @@ std::vector<Client*> *Channel::getClientsFromChannel()
     return &this->_clients;
 }
 
-std::vector<Client*> *Channel::getOperators()
+std::vector<Client*> *Channel::getAdmins()
 {
-    return &this->_operators;
+    return &this->_admins;
 }
 
 Client *Channel::getClientByNickName(std::string name)
@@ -42,7 +42,7 @@ Client *Channel::getClientByNickName(std::string name)
         if (this->_clients[i]->getNickName() == name)
             return this->_clients[i];
     }
-    return 0;
+    return nullptr;
 }
 
 Client *Channel::getClientByRealName(std::string name)
@@ -52,7 +52,7 @@ Client *Channel::getClientByRealName(std::string name)
         if (this->_clients[i]->getRealName() == name)
             return this->_clients[i];
     }
-    return 0;
+    return nullptr;
 }
 
 struct pollfd *Channel::getClientFd(Client* client)
@@ -62,7 +62,7 @@ struct pollfd *Channel::getClientFd(Client* client)
         if (this->_clients[i] == client)
             this->_clients[i]->getFd();
     }
-    return 0;
+    return nullptr;
 }
 
 std::string Channel::getChannelName()

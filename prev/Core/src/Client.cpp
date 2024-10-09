@@ -2,17 +2,12 @@
 
 Client::Client()
 {
-    this->_isVerified = false;
+
 }
 
 Client::~Client()
 {
 
-}
-
-bool			Client::operator==(const Client &n2)
-{
-    return (this == &n2);
 }
 
 std::string Client::getNickName()
@@ -25,19 +20,9 @@ std::string Client::getRealName()
     return this->_real;
 }
 
-bool    Client::isVerified()
+bool    Client::isAdmin()
 {
-    return this->_isVerified;
-}
-
-void    Client::setVerified()
-{
-    this->_isVerified = true;
-}
-
-bool    Client::isOperator()
-{
-    return this->_isOperator;
+    return this->_isAdmin;
 }
 
 struct pollfd   *Client::getFd()
@@ -60,7 +45,7 @@ void    Client::setReal(const std::string &name)
     this->_real = name;
 }
 
-void    Client::setAdmin(bool op)
+void    Client::setAdmin(bool admin)
 {
-    this->_isOperator = op;
+    this->_isAdmin;
 }

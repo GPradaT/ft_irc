@@ -21,10 +21,15 @@ bool AuthNickCmd::validate(IRCMessage const&message)
 {
 	struct pollfd *cliFd = Server::Singleton().getCurrentFd();
 	Client *client = Server::Singleton().getClientByFd(cliFd);
+	if (!client->isVerified() && (!Server::Singleton().getPasswd().empty() || Server::Singleton().getPasswd() != ""))
+	{
+		Server::Singleton().sendMsg(client, "ERR_PASSWDMISMATCH :Wrong Password\r\n");
+		Server::Singleton() -= client;
+		return false;
+	}
 	if (!client->isVerified())
 	{
-		Server::Singleton().sendMsg(client, "ERROR :No password provided\r\n");
-		return false;
+		client->setVerified();
 	}
 	if (message.getParams()[1].empty())
 	{
