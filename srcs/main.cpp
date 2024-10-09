@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 				char buffer[1024] = { 0 };
 				int recVal = 0;
 				recVal = recv(_fds[i].fd, buffer, sizeof(buffer), 0);
-				std::cout << buffer << buffer[std::strlen(buffer) - 2] << std::endl;
+				//std::cout << buffer << buffer[std::strlen(buffer) - 2] << std::endl;
 				std::string str = buffer;
 				IRCMessage message(str);
 				message.print();

@@ -187,16 +187,17 @@ bool	IRCMessage::isValidPrefix(const std::string &prefix)
 
 bool	IRCMessage::isValidMiddleParam(const std::string &param)
 {
-	std::cout << "Int value: " << static_cast<int>(param[0]) << std::endl;
 	if (param.empty())
 		return false;
 	if (param[0] == ':')
 		return false;
 	for (size_t i = 0; i < param.size(); ++i)
 	{
-		std::cout << "Char value: " << static_cast<int>(param[i]) << std::endl;
 		if (param[i] == ' ' || param[i] == ':')
+		{
+			std::cout << static_cast<int>(param[i]) << std::endl;
 			return false;
+		}
 	}
 	return true;
 }
