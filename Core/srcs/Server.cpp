@@ -4,27 +4,39 @@
 
 #include "../includes/IRCMessage.hpp"
 #include "../../Commands/includes/AuthNickCmd.hpp"
+#include "../../Commands/includes/ClientQuitCmd.hpp"
 #include "../../Commands/includes/AuthPassCmd.hpp"
+#include "../../Commands/includes/MsgNoticeCmd.hpp"
 #include "../../Commands/includes/MsgPrivmsgCmd.hpp"
 #include "../../Commands/includes/ChnlJoinCmd.hpp"
 #include "../../Commands/includes/ChnlWhoCmd.hpp"
 
 Server::Server()
 {
-    this->_commands["NICK"] = new AuthNickCmd();
-    this->_commands["PASS"] = new AuthPassCmd();
-    this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
-    this->_commands["JOIN"] = new ChnlJoinCmd();
-    this->_commands["WHO"] = new ChnlWhoCmd();
+
 }
 
 Server::~Server()
 {
+    delete this->_commands["NICK"];
+    delete this->_commands["PASS"];
+    delete this->_commands["PRIVMSG"];
+    delete this->_commands["JOIN"];
+    delete this->_commands["WHO"];
+    delete this->_commands["QUIT"];
+
 
 }
 
 int Server::initialize(const std::string &psswd, const unsigned short &port)
 {
+    this->_commands["NICK"] = new AuthNickCmd();
+    this->_commands["PASS"] = new AuthPassCmd();
+    this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
+    this->_commands["JOIN"] = new ChnlJoinCmd();
+    this->_commands["WHO"] = new ChnlWhoCmd();
+    this->_commands["QUIT"] = new QuitCommand();
+    this->_commands["NOTICE"] = new MsgNoticeCmd();
     std::cout << this->_fds.size();
     this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     int a;
@@ -91,6 +103,10 @@ void Server::serverLoop()
                     IRCMessage message(line);
                     // if (message.getIsValid())
                     Server::Singleton() *= message;
+                    if (message.getCommand() == "QUIT")
+                    {
+                        Server::Singleton()[i]->fd = -1;
+                    }
                     if (Server::Singleton()[i]->fd == -1)
                     {
                         Server::Singleton() -= Server::Singleton()[i];
@@ -103,6 +119,10 @@ void Server::serverLoop()
     }
     // closing the socket.
     close(Server::Singleton().getServerSocket());
+    for (int i = 0; i < Server::Singleton().getFdSize(); i++)
+    {
+        close(Server::Singleton()[i]->fd);
+    }
 }
 
 Server& Server::operator+=(std::string const& chanName)
@@ -244,7 +264,8 @@ int				Server::getFdSize()
 
 int Server::sendMsg(Client* client, const std::string &msg)
 {
-    send(client->getFd()->fd, msg.c_str(), msg.length(), 0);
+    int fd = client->getFd()->fd;
+    send(fd, msg.c_str(), msg.length(), 0);
     return 0;
 }
 

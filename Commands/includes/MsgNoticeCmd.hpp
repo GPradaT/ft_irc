@@ -1,6 +1,8 @@
 #pragma once
 
 #include "MessageCommand.hpp"
+#include "../../Core/includes/Server.hpp"
+
 
 class	MsgNoticeCmd : public MessageCommand
 {
@@ -8,8 +10,8 @@ class	MsgNoticeCmd : public MessageCommand
 		MsgNoticeCmd();
 		~MsgNoticeCmd();
 
-		void	execute();
-		bool	validate();
+		void execute(Client *client, IRCMessage const &message);
+		bool validate(IRCMessage const &message);
 };
 
 
