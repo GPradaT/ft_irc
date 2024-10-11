@@ -159,12 +159,12 @@ struct pollfd *Server::operator[](int idx)
 
 std::string Server::getPasswd()
 {
-    return this->_passwd;    
+    return this->_passwd;
 }
 
 struct pollfd   *Server::getCurrentFd()
 {
-    return this->_currentFd;    
+    return this->_currentFd;
 }
 
 void			Server::setCurrentFd(struct pollfd *current)
@@ -259,9 +259,14 @@ int Server::sendMsgAll(const std::string &msg)
 
 void Server::createChannel(const std::string &name)
 {
-    Channel newChannel;
-    newChannel.setName(name);
-    this->_channels.push_back(newChannel);
+	Channel newChannel;
+	if (newChannel.setName(name))
+	{
+		//struct pollfd *fd = Server::Singleton().getCurrentFd();
+		//Client *client = Server::Singleton().getClientByFd(fd);
+		//newChannel.setChannelModes(client);
+		this->_channels.push_back(newChannel);
+	}
 }
 
 void Server::createClient(const std::string &nick, const std::string &real, struct pollfd fd)

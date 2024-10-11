@@ -1,9 +1,15 @@
 #include "../includes/Channel.hpp"
 #include "../includes/Server.hpp"
+
 Channel::Channel()
 {
     this->_limit = -1;
-    this->_key = 0;
+    this->_key = nullptr;
+	_mode.inviteOnly = false;
+	_mode.privateChannel = false;
+	_mode.secretChannel = false;
+	_mode.operOnly = false;
+	_mode.chanCreator = nullptr;
 }
 
 Channel::~Channel()
@@ -78,7 +84,44 @@ void    Channel::sendToAll(const std::string &msg)
     }
 }
 
-void    Channel::setName(const std::string &name)
+bool	Channel::isFirstChannelChar(const char c) const
 {
-    this->_name = name;
+	if (c == '#' || c == '!')
+		return true;
+	return false;
+}
+
+bool	Channel::setName(const std::string &name)
+{
+	if (name.empty())
+		return false;
+	if (name.length() > 50 || !isFirstChannelChar(name[0]))
+		return false;
+	this->_name = name;
+	this->_channelPrefix = name[0];
+	return true;;
+}
+
+char	Channel::getChannelPrefix() const
+{
+	return this->_channelPrefix;
+}
+
+const std::string	&Channel::getKey() const
+{
+	return this->_key;
+}
+
+int	Channel::getLimit() const
+{
+	return this->_limit;
+}
+
+void	Channel::setChannelModes(Client *client)
+{
+	//set the modes of the channel
+	//set the creator of the channel
+	//set the key of the channel
+	//set the limit of the channel
+	//set the modes of the channel
 }

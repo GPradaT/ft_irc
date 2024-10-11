@@ -2,14 +2,14 @@
 
 #include "Client.hpp"
 
-struct mode
+typedef struct mode
 {
 	bool		inviteOnly;
+	bool		operOnly;
 	bool		privateChannel;
 	bool		secretChannel;
-	bool		operOnly;
-	bool		chanCreator;
-};
+	std::string	chanCreator;
+} s_mode;
 
 class	Channel
 {
@@ -17,8 +17,11 @@ class	Channel
 		std::vector<Client*>	_clients;
 		std::vector<Client*>	_operators;
 		std::string				_name;
+		char					_channelPrefix;
+		// CHANNEL MODES
+		std::string				_key;
 		int						_limit;
-		std::string				*_key;
+		s_mode					_mode;
 
 	public:
 		Channel				&operator+=(Client *cli);
@@ -31,11 +34,22 @@ class	Channel
 
 		std::string				getChannelName();
 		std::vector<Client*>	*getOperators();
+		std::string				&getChanCreator() const;
+		const std::string		&getKey() const;
+
+		//s_mode					getMode();
+		int						getLimit() const;
+		char					getChannelPrefix() const;
 
 		void					sendToAll(const std::string &msg);
-		void					setName(const std::string &name);
+		bool					setName(const std::string &name);
+
 	Channel();
 	~Channel();
+
+	private:
+		bool					isFirstChannelChar(const char c) const;
+		void					setChannelModes(Client *client);
 };
 
 
