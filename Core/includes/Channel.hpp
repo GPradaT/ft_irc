@@ -6,8 +6,8 @@ typedef struct mode
 {
 	bool		inviteOnly;
 	bool		operOnly;
-	bool		privateChannel;
-	bool		secretChannel;
+	bool		topicChannel;
+	//bool		Channel;
 	std::string	chanCreator;
 } s_mode;
 
@@ -34,6 +34,7 @@ class	Channel
 
 		std::string				getChannelName();
 		std::deque<Client*>	*getOperators();
+		bool					isOperator(Client *client);
 		std::string				&getChanCreator() const;
 		const std::string		&getKey() const;
 
@@ -43,7 +44,7 @@ class	Channel
 
 		void					sendToAll(const std::string &msg);
 		bool					setName(const std::string &name);
-
+		s_mode					*getModes();
 	Channel();
 	~Channel();
 

@@ -6,8 +6,8 @@ Channel::Channel()
     this->_limit = -1;
     this->_key = "";
 	_mode.inviteOnly = false;
-	_mode.privateChannel = false;
-	_mode.secretChannel = false;
+	_mode.topicChannel = false;
+	//_mode.secretChannel = false;
 	_mode.operOnly = false;
 	_mode.chanCreator = "";
 }
@@ -39,6 +39,17 @@ std::deque<Client*> *Channel::getClientsFromChannel()
 std::deque<Client*> *Channel::getOperators()
 {
     return &this->_operators;
+}
+
+bool	Channel::isOperator(Client *client)
+{
+	for (int i = 0; i < _operators.size(); ++i)
+	{
+		std::cout << "operator: " << _operators[i]->getNickName() << std::endl;
+		if (_operators[i] == client)
+			return true;
+	}
+	return false;
 }
 
 Client *Channel::getClientByNickName(std::string name)
@@ -93,10 +104,6 @@ bool	Channel::isFirstChannelChar(const char c) const
 
 bool	Channel::setName(const std::string &name)
 {
-	/*if (name.empty())
-		return false;
-	if (name.length() > 50 || !isFirstChannelChar(name[0]))
-		return false;*/
 	this->_name = name;
 	this->_channelPrefix = name[0];
 	return true;;
