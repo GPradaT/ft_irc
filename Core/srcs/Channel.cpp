@@ -31,12 +31,12 @@ Channel &Channel::operator-=(Client *cli)
     return *this;
 }
 
-std::vector<Client*> *Channel::getClientsFromChannel()
+std::deque<Client*> *Channel::getClientsFromChannel()
 {
     return &this->_clients;
 }
 
-std::vector<Client*> *Channel::getOperators()
+std::deque<Client*> *Channel::getOperators()
 {
     return &this->_operators;
 }
@@ -104,12 +104,7 @@ bool	Channel::isFirstChannelChar(const char c) const
 
 bool	Channel::setName(const std::string &name)
 {
-	//if (name.length() > 50 || !isFirstChannelChar(name[0]))
-	//	return false;
-	this->_name = name.substr(1);
-	//if (this->_name[0] == '#')
-	//	this->_name = this->_name.substr(1);
-	std::cout << "final channel name: [" << this->_name << "]\n"<< std::endl;
+	this->_name = name;
 	this->_channelPrefix = name[0];
 	return true;;
 }
@@ -129,9 +124,9 @@ int	Channel::getLimit() const
 	return this->_limit;
 }
 
-s_mode	*Channel::getModes()
+s_mode  *Channel::getModes()
 {
-	return &this->_mode;
+    return &this->_modes;
 }
 
 void	Channel::setChannelModes(Client *client)

@@ -14,8 +14,8 @@ typedef struct mode
 class	Channel
 {
 	private:
-		std::vector<Client*>	_clients;
-		std::vector<Client*>	_operators;
+		std::deque<Client*>	_clients;
+		std::deque<Client*>	_operators;
 		std::string				_name;
 		char					_channelPrefix;
 		// CHANNEL MODES
@@ -27,13 +27,13 @@ class	Channel
 		Channel				&operator+=(Client *cli);
 		Channel				&operator-=(Client *cli);
 
-		std::vector<Client*>	*getClientsFromChannel();
+		std::deque<Client*>	*getClientsFromChannel();
 		Client*					getClientByNickName(std::string name);
 		Client*					getClientByRealName(std::string name);
 		struct pollfd			*getClientFd(Client* client);
 
 		std::string				getChannelName();
-		std::vector<Client*>	*getOperators();
+		std::deque<Client*>	*getOperators();
 		bool					isOperator(Client *client);
 		std::string				&getChanCreator() const;
 		const std::string		&getKey() const;
