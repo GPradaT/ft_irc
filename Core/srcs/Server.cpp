@@ -8,6 +8,7 @@
 #include "../../Commands/includes/MsgPrivmsgCmd.hpp"
 #include "../../Commands/includes/ChnlJoinCmd.hpp"
 #include "../../Commands/includes/ChnlWhoCmd.hpp"
+#include "../../Commands/includes/ChnlModeCmd.hpp"
 
 Server::Server()
 {
@@ -16,6 +17,7 @@ Server::Server()
     this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
     this->_commands["JOIN"] = new ChnlJoinCmd();
     this->_commands["WHO"] = new ChnlWhoCmd();
+	this->_commands["MODE"] = new ChnlModeCmd();
 }
 
 Server::~Server()
@@ -262,10 +264,12 @@ void Server::createChannel(const std::string &name)
 	Channel newChannel;
 	if (newChannel.setName(name))
 	{
+		std::cout << "paso pro aqui" << std::endl;
 		//struct pollfd *fd = Server::Singleton().getCurrentFd();
 		//Client *client = Server::Singleton().getClientByFd(fd);
 		//newChannel.setChannelModes(client);
 		this->_channels.push_back(newChannel);
+		std::cout << this->_channels[this->_channels.size() - 1].getChannelName() << " created" << std::endl;
 	}
 }
 

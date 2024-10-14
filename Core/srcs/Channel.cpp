@@ -4,12 +4,12 @@
 Channel::Channel()
 {
     this->_limit = -1;
-    this->_key = nullptr;
+    this->_key = "";
 	_mode.inviteOnly = false;
-	_mode.privateChannel = false;
-	_mode.secretChannel = false;
+	_mode.topicChannel = false;
+	//_mode.secretChannel = false;
 	_mode.operOnly = false;
-	_mode.chanCreator = nullptr;
+	_mode.chanCreator = "";
 }
 
 Channel::~Channel()
@@ -39,6 +39,17 @@ std::vector<Client*> *Channel::getClientsFromChannel()
 std::vector<Client*> *Channel::getOperators()
 {
     return &this->_operators;
+}
+
+bool	Channel::isOperator(Client *client)
+{
+	for (int i = 0; i < _operators.size(); ++i)
+	{
+		std::cout << "operator: " << _operators[i]->getNickName() << std::endl;
+		if (_operators[i] == client)
+			return true;
+	}
+	return false;
 }
 
 Client *Channel::getClientByNickName(std::string name)
@@ -93,11 +104,12 @@ bool	Channel::isFirstChannelChar(const char c) const
 
 bool	Channel::setName(const std::string &name)
 {
-	if (name.empty())
-		return false;
-	if (name.length() > 50 || !isFirstChannelChar(name[0]))
-		return false;
-	this->_name = name;
+	//if (name.length() > 50 || !isFirstChannelChar(name[0]))
+	//	return false;
+	this->_name = name.substr(1);
+	//if (this->_name[0] == '#')
+	//	this->_name = this->_name.substr(1);
+	std::cout << "final channel name: [" << this->_name << "]\n"<< std::endl;
 	this->_channelPrefix = name[0];
 	return true;;
 }
@@ -115,6 +127,11 @@ const std::string	&Channel::getKey() const
 int	Channel::getLimit() const
 {
 	return this->_limit;
+}
+
+s_mode	*Channel::getModes()
+{
+	return &this->_mode;
 }
 
 void	Channel::setChannelModes(Client *client)
