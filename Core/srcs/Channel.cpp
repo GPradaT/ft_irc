@@ -4,12 +4,12 @@
 Channel::Channel()
 {
     this->_limit = -1;
-    this->_key = nullptr;
+    this->_key = "";
 	_mode.inviteOnly = false;
 	_mode.privateChannel = false;
 	_mode.secretChannel = false;
 	_mode.operOnly = false;
-	_mode.chanCreator = nullptr;
+	_mode.chanCreator = "";
 }
 
 Channel::~Channel()
@@ -31,12 +31,12 @@ Channel &Channel::operator-=(Client *cli)
     return *this;
 }
 
-std::vector<Client*> *Channel::getClientsFromChannel()
+std::deque<Client*> *Channel::getClientsFromChannel()
 {
     return &this->_clients;
 }
 
-std::vector<Client*> *Channel::getOperators()
+std::deque<Client*> *Channel::getOperators()
 {
     return &this->_operators;
 }
@@ -93,10 +93,10 @@ bool	Channel::isFirstChannelChar(const char c) const
 
 bool	Channel::setName(const std::string &name)
 {
-	if (name.empty())
+	/*if (name.empty())
 		return false;
 	if (name.length() > 50 || !isFirstChannelChar(name[0]))
-		return false;
+		return false;*/
 	this->_name = name;
 	this->_channelPrefix = name[0];
 	return true;;
@@ -115,6 +115,11 @@ const std::string	&Channel::getKey() const
 int	Channel::getLimit() const
 {
 	return this->_limit;
+}
+
+s_mode  *Channel::getModes()
+{
+    return &this->_modes;
 }
 
 void	Channel::setChannelModes(Client *client)

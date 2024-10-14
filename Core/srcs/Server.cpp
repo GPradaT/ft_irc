@@ -15,7 +15,6 @@ Server::Server()
     this->_commands["PASS"] = new AuthPassCmd();
     this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
     this->_commands["JOIN"] = new ChnlJoinCmd();
-    this->_commands["WHO"] = new ChnlWhoCmd();
 }
 
 Server::~Server()
@@ -118,7 +117,7 @@ Server& Server::operator-=(Client *client)
     client->getFd()->fd = -1;
     for (int i = 0; i < this->_channels.size(); i++)
         this->_channels[i] -= client;
-    std::vector<Client>::iterator it = std::find(this->_clients.begin(), this->_clients.end(), *client);
+    std::deque<Client>::iterator it = std::find(this->_clients.begin(), this->_clients.end(), *client);
     if (it != this->_clients.end())
     {
         std::cout << "el viejo size de clients es " << this->_clients.size() << std::endl;
@@ -131,7 +130,7 @@ Server& Server::operator-=(Client *client)
 
 Server& Server::operator-=(struct pollfd *fd)
 {
-    std::vector<struct pollfd>::iterator it;
+    std::deque<struct pollfd>::iterator it;
     for (it = this->_fds.begin(); it < this->_fds.end(); it++)
     {
         if ((*it).fd == -1)
@@ -311,8 +310,8 @@ int Server::removeClientFromChannel(Client *client, Channel *channel)
 {
     if (client != 0)
     {
-        std::vector<Client*> *clients = channel->getClientsFromChannel();
-        std::vector<Client*>::iterator it = std::find((*clients).begin(), (*clients).end(), client);
+        std::deque<Client*> *clients = channel->getClientsFromChannel();
+        std::deque<Client*>::iterator it = std::find((*clients).begin(), (*clients).end(), client);
         for (int i = 0; i < (*clients).size(); i++)
         {
             if ((*clients)[i] == client)
@@ -325,8 +324,8 @@ int Server::removeClientFromChannel(Client *client, Channel *channel)
             (*clients).erase(std::remove((*clients).begin(), (*clients).end(), (Client*)0), (*clients).end());
         if (client->isOperator())
         {
-            std::vector<Client*> *admins = channel->getOperators();
-            std::vector<Client*>::iterator it2 = std::find((*admins).begin(), (*admins).end(), client);
+            std::deque<Client*> *admins = channel->getOperators();
+            std::deque<Client*>::iterator it2 = std::find((*admins).begin(), (*admins).end(), client);
             for (int i = 0; i < (*admins).size(); i++)
             {
                 if ((*admins)[i] == client)
