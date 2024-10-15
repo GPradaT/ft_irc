@@ -11,6 +11,7 @@
 #include "../../Commands/includes/ChnlModeCmd.hpp"
 #include "../../Commands/includes/ChnlKickCmd.hpp"
 #include "../../Commands/includes/ChnlInviteCmd.hpp"
+#include "../../Commands/includes/ChnlTopicCmd.hpp"
 
 Server::Server()
 {
@@ -21,6 +22,7 @@ Server::Server()
     this->_commands["MODE"] = new ChnlModeCmd();
 	this->_commands["KICK"] = new ChnlKickCmd();
 	this->_commands["INVITE"] = new ChnlInviteCmd();
+	this->_commands["TOPIC"] = new ChnlTopicCmd();
 }
 
 Server::~Server()
