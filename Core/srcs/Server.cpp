@@ -9,6 +9,7 @@
 #include "../../Commands/includes/ChnlJoinCmd.hpp"
 #include "../../Commands/includes/ChnlWhoCmd.hpp"
 #include "../../Commands/includes/ChnlModeCmd.hpp"
+#include "../../Commands/includes/ChnlKickCmd.hpp"
 
 Server::Server()
 {
@@ -17,6 +18,7 @@ Server::Server()
     this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
     this->_commands["JOIN"] = new ChnlJoinCmd();
     this->_commands["MODE"] = new ChnlModeCmd();
+	this->_commands["KICK"] = new ChnlKickCmd();
 }
 
 Server::~Server()
