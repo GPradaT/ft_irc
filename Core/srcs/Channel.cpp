@@ -5,11 +5,11 @@ Channel::Channel()
 {
     this->_limit = -1;
     this->_key = "";
-	_mode.inviteOnly = false;
-	_mode.topicChannel = false;
+	_modes.inviteOnly = false;
+	_modes.topicChannel = false;
 	//_mode.secretChannel = false;
-	_mode.operOnly = false;
-	_mode.chanCreator = "";
+	_modes.operOnly = false;
+	_modes.chanCreator = "";
 }
 
 Channel::~Channel()
@@ -126,7 +126,7 @@ int	Channel::getLimit() const
 
 s_mode  *Channel::getModes()
 {
-    return &this->_modes;
+	return &this->_modes;
 }
 
 void	Channel::setChannelModes(Client *client)

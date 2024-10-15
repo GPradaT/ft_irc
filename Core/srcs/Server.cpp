@@ -264,10 +264,19 @@ void Server::createChannel(const std::string &name)
 	if (newChannel.setName(name))
 	{
 		std::cout << "paso pro aqui" << std::endl;
-		//struct pollfd *fd = Server::Singleton().getCurrentFd();
-		//Client *client = Server::Singleton().getClientByFd(fd);
+		struct pollfd *fd = Server::Singleton().getCurrentFd();
+		Client *client = Server::Singleton().getClientByFd(fd);
 		//newChannel.setChannelModes(client);
 		this->_channels.push_back(newChannel);
+		std::cout << "DEBUG 1" << std::endl;
+		this->_channels[this->_channels.size() - 1] += client;
+		std::cout << "DEBUG 2" << std::endl;
+		this->_channels[this->_channels.size() - 1].getModes()->chanCreator = client->getNickName();
+		std::cout << "DEBUG 3" << std::endl;
+		this->_channels[this->_channels.size() - 1].getModes()->topicChannel = true;
+		std::cout << "DEBUG 4" << std::endl;
+		this->_channels[this->_channels.size() - 1].getOperators()->push_back(client);
+		std::cout << "DEBUG 5" << std::endl;
 		std::cout << this->_channels[this->_channels.size() - 1].getChannelName() << " created" << std::endl;
 	}
 }

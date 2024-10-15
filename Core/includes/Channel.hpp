@@ -21,7 +21,7 @@ class	Channel
 		// CHANNEL MODES
 		std::string				_key;
 		int						_limit;
-		s_mode					_mode;
+		s_mode					_modes;
 
 	public:
 		Channel				&operator+=(Client *cli);
