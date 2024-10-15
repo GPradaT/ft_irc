@@ -10,6 +10,7 @@
 #include "../../Commands/includes/ChnlWhoCmd.hpp"
 #include "../../Commands/includes/ChnlModeCmd.hpp"
 #include "../../Commands/includes/ChnlKickCmd.hpp"
+#include "../../Commands/includes/ChnlInviteCmd.hpp"
 
 Server::Server()
 {
@@ -19,6 +20,7 @@ Server::Server()
     this->_commands["JOIN"] = new ChnlJoinCmd();
     this->_commands["MODE"] = new ChnlModeCmd();
 	this->_commands["KICK"] = new ChnlKickCmd();
+	this->_commands["INVITE"] = new ChnlInviteCmd();
 }
 
 Server::~Server()

@@ -7,6 +7,7 @@ typedef struct mode
 	bool		inviteOnly;
 	bool		operOnly;
 	bool		topicChannel;
+	std::string	Topic;
 	//bool		Channel;
 	std::string	chanCreator;
 } s_mode;

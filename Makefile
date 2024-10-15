@@ -5,7 +5,7 @@ SRC = Core/srcs/Client.cpp Core/srcs/Channel.cpp Core/srcs/Server.cpp Core/srcs/
 Core/srcs/IRCMessage.cpp Commands/srcs/AuthNickCmd.cpp Commands/srcs/AuthPassCmd.cpp \
 Commands/srcs/MsgPrivmsgCmd.cpp Commands/srcs/MessageCommand.cpp Commands/srcs/ChnlJoinCmd.cpp \
 Commands/srcs/ChnlWhoCmd.cpp Commands/srcs/ChnlModeCmd.cpp Commands/srcs/ChnlKickCmd.cpp \
-Commands/srcs/ChnlInviteCmd.cpp
+Commands/srcs/ChnlInviteCmd.cpp Commands/srcs/ChnlTopicCmd.cpp
 
 OBJ = $(SRC:.cpp=.o)
 INCLUDES= Core/includes/Client.hpp Core/includes/Channel.hpp Core/includes/Server.hpp \
