@@ -129,6 +129,16 @@ s_mode  *Channel::getModes()
 	return &this->_modes;
 }
 
+void    Channel::sendMsgExcept(Client *c, const std::string &msg)
+{
+    for (int i = 0; i < this->_clients.size(); i++)
+    {
+        Client *cli = this->_clients[i];
+        if (c != cli)
+            Server::Singleton().sendMsg(cli, msg);
+    }
+}
+
 void	Channel::setChannelModes(Client *client)
 {
 	//set the modes of the channel

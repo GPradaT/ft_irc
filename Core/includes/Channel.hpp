@@ -42,7 +42,8 @@ class	Channel
 		//s_mode					getMode();
 		int						getLimit() const;
 		char					getChannelPrefix() const;
-
+		
+		void					sendMsgExcept(Client *c, const std::string &msg);
 		void					sendToAll(const std::string &msg);
 		bool					setName(const std::string &name);
 		s_mode					*getModes();

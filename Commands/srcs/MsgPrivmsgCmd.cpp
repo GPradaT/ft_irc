@@ -7,32 +7,25 @@ MsgPrivmsgCmd::~MsgPrivmsgCmd() {}
 bool MsgPrivmsgCmd::validate(IRCMessage const &message)
 {
     Client *client = Server::Singleton().getClientByFd(Server::Singleton().getCurrentFd());
-    std::string target = message.getParams()[0];
-
+    std::string chars = message.getTrailing();
     if (message.getParams().empty())
     {
         Server::Singleton().sendMsg(client, "411 ERR_NORECIPIENT :No recipient given (PRIVMSG)\r\n");
         return false;
     }
-    if (message.getParams().size() < 2)
+    if (chars.empty())
     {
         Server::Singleton().sendMsg(client, "412 ERR_NOTEXTTOSEND :No text to send\r\n");
         return false;
     }
-
+    execute(client, message);
     return true;
-
 }
-
+//enviar el mensaje a todos los del canal
 void MsgPrivmsgCmd::execute(Client *client, IRCMessage const &message)
 {
-    if (!validate(message))
-    {
-        return;
-    }
-
     std::string targetNick = message.getParams()[0];
-    std::string msgContent = message.getParams()[1];
+    std::string msgContent = message.getTrailing();
     std::cout << "Mensaje privado de " << client->getNickName() << " a " << targetNick << ": " << msgContent << std::endl;
 
     Client *targetClient = Server::Singleton().getClientByNickName(targetNick);
@@ -43,6 +36,12 @@ void MsgPrivmsgCmd::execute(Client *client, IRCMessage const &message)
     }
     else
     {
-        Server::Singleton().sendMsg(client, "401 ERR_NOSUCHNICK :No such nick/channel\r\n");
+        Channel *chan = Server::Singleton().getChannelByName(targetNick);
+        if (chan)
+        {
+            chan->sendMsgExcept(client, ":" + client->getNickName() + " PRIVMSG " + chan->getChannelName() + " :" + message.getTrailing() + "\r\n");
+        }
+        else
+            Server::Singleton().sendMsg(client, "401 ERR_NOSUCHNICK :No such nick/channel\r\n");
     }
 }

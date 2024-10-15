@@ -19,7 +19,7 @@ Server::Server()
     this->_commands["PASS"] = new AuthPassCmd();
     this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
     this->_commands["JOIN"] = new ChnlJoinCmd();
-    this->_commands["MODE"] = new ChnlModeCmd();
+    //this->_commands["MODE"] = new ChnlModeCmd();
 	this->_commands["KICK"] = new ChnlKickCmd();
 	this->_commands["INVITE"] = new ChnlInviteCmd();
 	this->_commands["TOPIC"] = new ChnlTopicCmd();
