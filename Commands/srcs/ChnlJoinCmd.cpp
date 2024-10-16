@@ -49,8 +49,10 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 		/*Channel *current = Server::Singleton().getChannelByClient(_client);
 		if (current != 0)
 			*current -= _client;*/
-		*Server::Singleton().getChannelByName(str) += _client;
-		std::cout << "hay estos clientes " << Server::Singleton().getChannelByName(str)->getClientsFromChannel()->size() << std::endl;
+		Channel *chan = Server::Singleton().getChannelByName(str);
+		if (chan->getClientByNickName(_client->getNickName()) == 0)
+			*chan += _client;
+		std::cout << "hay esta cantidad de cleintes en el chan ---> " << chan->getClientsFromChannel()->size() << std::endl;
 	}
 	else
 	{

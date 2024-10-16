@@ -1,19 +1,25 @@
 #include "../includes/Server.hpp"
 #include <signal.h>
+#include <set>
+#include <stdexcept>
 
 
 #include "../includes/IRCMessage.hpp"
 #include "../../Commands/includes/AuthNickCmd.hpp"
-#include "../../Commands/includes/ClientQuitCmd.hpp"
 #include "../../Commands/includes/AuthPassCmd.hpp"
-#include "../../Commands/includes/MsgNoticeCmd.hpp"
 #include "../../Commands/includes/MsgPrivmsgCmd.hpp"
 #include "../../Commands/includes/ChnlJoinCmd.hpp"
+#include "../../Commands/includes/ClientQuitCmd.hpp"
 #include "../../Commands/includes/ChnlWhoCmd.hpp"
+#include "../../Commands/includes/ChnlModeCmd.hpp"
+#include "../../Commands/includes/ChnlKickCmd.hpp"
+#include "../../Commands/includes/ChnlInviteCmd.hpp"
+#include "../../Commands/includes/ChnlTopicCmd.hpp"
 
 Server::Server()
 {
 
+    
 }
 
 Server::~Server()
@@ -25,26 +31,31 @@ Server::~Server()
     delete this->_commands["WHO"];
     delete this->_commands["QUIT"];
     delete this->_commands["NOTICE"];
+    // delete this->_commands["MODE"];
+    delete this->_commands["KICK"];
+    delete this->_commands["INVITE"];
+    delete this->_commands["TOPIC"];
 }
-
-#include <set>
-#include <stdexcept>
 
 int Server::initialize(const std::string &psswd, const unsigned short &port)
 {
-    // con el set no se duplican parametros Y se ordenan
-    std::set<unsigned short> occupiedPorts = {80, 443, 21, 22, 25, 110, 143, 993, 995};
-    if (occupiedPorts.find(port) != occupiedPorts.end()) {
-        throw std::runtime_error("Port " + std::to_string(port) + " is commonly occupied. Please choose a different port.");
-    }
     this->_commands["NICK"] = new AuthNickCmd();
     this->_commands["PASS"] = new AuthPassCmd();
     this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
-    this->_commands["NOTICE"] = new MsgNoticeCmd();
     this->_commands["JOIN"] = new ChnlJoinCmd();
     this->_commands["WHO"] = new ChnlWhoCmd();
     this->_commands["QUIT"] = new QuitCommand();
-    
+    // this->_commands["MODE"] = new ChnlModeCmd();
+    this->_commands["KICK"] = new ChnlKickCmd();
+    this->_commands["INVITE"] = new ChnlInviteCmd();
+    this->_commands["TOPIC"] = new ChnlTopicCmd();
+
+    std::set<unsigned short> occupiedPorts = {80, 443, 21, 22, 25, 110, 143, 993, 995};
+    if (occupiedPorts.find(port) != occupiedPorts.end())
+    {
+        throw std::runtime_error("Port " + std::to_string(port) + " is commonly occupied. Please choose a different port.");
+    }
+
     std::cout << this->_fds.size();
     this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     int a;
@@ -109,7 +120,6 @@ void Server::serverLoop()
                 while (std::getline(ss, line, '\n'))
                 {
                     IRCMessage message(line);
-                    message.print();
                     // if (message.getIsValid())
                     Server::Singleton() *= message;
                     if (Server::Singleton()[i]->fd == -1)
@@ -124,10 +134,6 @@ void Server::serverLoop()
     }
     // closing the socket.
     close(Server::Singleton().getServerSocket());
-    for (int i = 0; i < Server::Singleton().getFdSize(); i++)
-    {
-        close(Server::Singleton()[i]->fd);
-    }
 }
 
 Server& Server::operator+=(std::string const& chanName)
@@ -231,7 +237,6 @@ Client*    Server::getClientByNickName(const std::string &name)
 {
     for (int i = 0; i < this->_clients.size(); i++)
     {
-        std::cout << "comparando " << this->_clients[i].getNickName() << " con " << name << std::endl;
         if (this->_clients[i].getNickName() == name)
             return &this->_clients[i];
     }
