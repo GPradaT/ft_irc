@@ -135,7 +135,10 @@ void    Channel::sendMsgExcept(Client *c, const std::string &msg)
     {
         Client *cli = this->_clients[i];
         if (c != cli)
+        {
+            std::cout << "name to send is " << this->_clients.size() << std::endl;
             Server::Singleton().sendMsg(cli, msg);
+        }
     }
 }
 
