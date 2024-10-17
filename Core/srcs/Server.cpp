@@ -26,10 +26,10 @@ Server::~Server()
     delete this->_commands["PASS"];
     delete this->_commands["PRIVMSG"];
     delete this->_commands["JOIN"];
-    delete this->_commands["WHO"];
+    //delete this->_commands["WHO"];
     delete this->_commands["QUIT"];
     delete this->_commands["NOTICE"];
-    // delete this->_commands["MODE"];
+    //delete this->_commands["MODE"];
     delete this->_commands["KICK"];
     delete this->_commands["INVITE"];
     delete this->_commands["TOPIC"];
@@ -41,9 +41,9 @@ int Server::initialize(const std::string &psswd, const unsigned short &port)
     this->_commands["PASS"] = new AuthPassCmd();
     this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
     this->_commands["JOIN"] = new ChnlJoinCmd();
-    this->_commands["WHO"] = new ChnlWhoCmd();
+    //this->_commands["WHO"] = new ChnlWhoCmd();
     this->_commands["QUIT"] = new QuitCommand();
-    // this->_commands["MODE"] = new ChnlModeCmd();
+    //this->_commands["MODE"] = new ChnlModeCmd();
     this->_commands["KICK"] = new ChnlKickCmd();
     this->_commands["INVITE"] = new ChnlInviteCmd();
     this->_commands["TOPIC"] = new ChnlTopicCmd();
