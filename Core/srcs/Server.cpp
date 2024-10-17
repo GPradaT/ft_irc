@@ -1,5 +1,7 @@
 #include "../includes/Server.hpp"
 #include <signal.h>
+#include <set>
+#include <stdexcept>
 
 
 #include "../includes/IRCMessage.hpp"
@@ -7,6 +9,7 @@
 #include "../../Commands/includes/AuthPassCmd.hpp"
 #include "../../Commands/includes/MsgPrivmsgCmd.hpp"
 #include "../../Commands/includes/ChnlJoinCmd.hpp"
+#include "../../Commands/includes/ClientQuitCmd.hpp"
 #include "../../Commands/includes/ChnlWhoCmd.hpp"
 #include "../../Commands/includes/ChnlModeCmd.hpp"
 #include "../../Commands/includes/ChnlKickCmd.hpp"
@@ -15,23 +18,42 @@
 
 Server::Server()
 {
-    this->_commands["NICK"] = new AuthNickCmd();
-    this->_commands["PASS"] = new AuthPassCmd();
-    this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
-    this->_commands["JOIN"] = new ChnlJoinCmd();
-    //this->_commands["MODE"] = new ChnlModeCmd();
-	this->_commands["KICK"] = new ChnlKickCmd();
-	this->_commands["INVITE"] = new ChnlInviteCmd();
-	this->_commands["TOPIC"] = new ChnlTopicCmd();
 }
 
 Server::~Server()
 {
-
+    delete this->_commands["NICK"];
+    delete this->_commands["PASS"];
+    delete this->_commands["PRIVMSG"];
+    delete this->_commands["JOIN"];
+    delete this->_commands["WHO"];
+    delete this->_commands["QUIT"];
+    delete this->_commands["NOTICE"];
+    // delete this->_commands["MODE"];
+    delete this->_commands["KICK"];
+    delete this->_commands["INVITE"];
+    delete this->_commands["TOPIC"];
 }
 
 int Server::initialize(const std::string &psswd, const unsigned short &port)
 {
+    this->_commands["NICK"] = new AuthNickCmd();
+    this->_commands["PASS"] = new AuthPassCmd();
+    this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
+    this->_commands["JOIN"] = new ChnlJoinCmd();
+    this->_commands["WHO"] = new ChnlWhoCmd();
+    this->_commands["QUIT"] = new QuitCommand();
+    // this->_commands["MODE"] = new ChnlModeCmd();
+    this->_commands["KICK"] = new ChnlKickCmd();
+    this->_commands["INVITE"] = new ChnlInviteCmd();
+    this->_commands["TOPIC"] = new ChnlTopicCmd();
+
+    std::set<unsigned short> occupiedPorts = {80, 443, 21, 22, 25, 110, 143, 993, 995};
+    if (occupiedPorts.find(port) != occupiedPorts.end())
+    {
+        throw std::runtime_error("Port " + std::to_string(port) + " is commonly occupied. Please choose a different port.");
+    }
+
     std::cout << this->_fds.size();
     this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     int a;
@@ -251,7 +273,8 @@ int				Server::getFdSize()
 
 int Server::sendMsg(Client* client, const std::string &msg)
 {
-    send(client->getFd()->fd, msg.c_str(), msg.length(), 0);
+    int fd = client->getFd()->fd;
+    send(fd, msg.c_str(), msg.length(), 0);
     return 0;
 }
 
