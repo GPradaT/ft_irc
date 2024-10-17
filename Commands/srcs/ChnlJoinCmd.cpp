@@ -18,6 +18,15 @@ void	ChnlJoinCmd::execute(Client *client, IRCMessage const&message)
 	str.erase(std::remove(str.begin (), str.end (), '\r'), str.end());
 	str.erase(std::remove(str.begin (), str.end (), '\n'), str.end());
 	Server::Singleton().sendMsg(_client, ":"+ _client->getNickName() + " JOIN " + str + "\r\n");
+	Channel *chan = Server::Singleton().getChannelByName(str);
+	if (chan){
+		for (int i = 0; i < chan->getClientsFromChannel()->size(); i++)
+		{
+			Client *to = (*chan->getClientsFromChannel())[i];
+			chan->sendToAll(":Server 353 " + client->getNickName() + " = " + chan->getChannelName() + " :@" + to->getNickName() + "\r\n");
+		}
+		chan->sendToAll(":Server 366 " + client->getNickName() + " " + chan->getChannelName() + " :End of /NAMES list\r\n");	
+	}
 }
 
 bool	ChnlJoinCmd::validate(IRCMessage const&msg)
