@@ -26,12 +26,11 @@ void MsgPrivmsgCmd::execute(Client *client, IRCMessage const &message)
 {
     std::string targetNick = message.getParams()[0];
     std::string msgContent = message.getTrailing();
-    std::cout << "Mensaje privado de " << client->getNickName().c_str() << " a " << targetNick << ": " << msgContent << std::endl;
-
+    
     Client *targetClient = Server::Singleton().getClientByNickName(targetNick);
     if (targetClient)
     {
-        std::string fullMsg = ":" + client->getNickName() + " PRIVMSG " + targetNick + " :" + msgContent + "\r\n";
+        std::string fullMsg = ":" + client->getNickName().substr(client->getNickName().begin(), client->getNickName().length() - 2) + " PRIVMSG " + targetNick + " :" + msgContent + "\r\n";
         Server::Singleton().sendMsg(client, fullMsg);
     }
     else

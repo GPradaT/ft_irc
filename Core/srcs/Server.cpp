@@ -18,8 +18,6 @@
 
 Server::Server()
 {
-
-    
 }
 
 Server::~Server()

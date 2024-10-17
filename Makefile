@@ -7,6 +7,7 @@ Commands/srcs/MsgPrivmsgCmd.cpp Commands/srcs/MessageCommand.cpp Commands/srcs/C
 Commands/srcs/ChnlWhoCmd.cpp Commands/srcs/ChnlModeCmd.cpp Commands/srcs/ChnlKickCmd.cpp \
 Commands/srcs/ChnlInviteCmd.cpp Commands/srcs/ChnlTopicCmd.cpp Commands/srcs/ClientQuitCmd.cpp
 
+
 OBJ = $(SRC:.cpp=.o)
 INCLUDES= Core/includes/Client.hpp Core/includes/Channel.hpp Core/includes/Server.hpp \
 Core/includes/IRCMessage.hpp Commands/includes/AuthNickCmd.hpp Commands/includes/AuthUserCmd.hpp \
