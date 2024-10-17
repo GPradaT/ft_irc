@@ -9,6 +9,7 @@
 #include "../../Commands/includes/AuthPassCmd.hpp"
 #include "../../Commands/includes/MsgPrivmsgCmd.hpp"
 #include "../../Commands/includes/ChnlJoinCmd.hpp"
+#include "../../Commands/includes/ChnlPartCmd.hpp"
 #include "../../Commands/includes/ClientQuitCmd.hpp"
 #include "../../Commands/includes/ChnlWhoCmd.hpp"
 #include "../../Commands/includes/ChnlModeCmd.hpp"
@@ -33,6 +34,7 @@ Server::~Server()
     delete this->_commands["KICK"];
     delete this->_commands["INVITE"];
     delete this->_commands["TOPIC"];
+    delete this->_commands["PART"];
 }
 
 int Server::initialize(const std::string &psswd, const unsigned short &port)
@@ -47,6 +49,7 @@ int Server::initialize(const std::string &psswd, const unsigned short &port)
     this->_commands["KICK"] = new ChnlKickCmd();
     this->_commands["INVITE"] = new ChnlInviteCmd();
     this->_commands["TOPIC"] = new ChnlTopicCmd();
+    this->_commands["PART"] = new ChnlPartCmd();
 
     std::set<unsigned short> occupiedPorts = {80, 443, 21, 22, 25, 110, 143, 993, 995};
     if (occupiedPorts.find(port) != occupiedPorts.end())
