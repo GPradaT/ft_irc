@@ -3,12 +3,11 @@
 
 Channel::Channel()
 {
-    this->_limit = -1;
-    this->_key = "";
+	this->_limit = -1;
+	this->_key = "";
 	_modes.inviteOnly = false;
-	_modes.topicChannel = false;
-	//_mode.secretChannel = false;
-	_modes.operOnly = false;
+	_modes.topicLock = false;
+	_modes.Topic = "";
 	_modes.chanCreator = "";
 }
 
@@ -41,7 +40,7 @@ std::deque<Client*> *Channel::getOperators()
     return &this->_operators;
 }
 
-bool	Channel::isOperator(Client *client)
+bool	Channel::isOperator(Client *client) const
 {
 	for (int i = 0; i < _operators.size(); ++i)
 	{
@@ -114,21 +113,6 @@ char	Channel::getChannelPrefix() const
 	return this->_channelPrefix;
 }
 
-const std::string	&Channel::getKey() const
-{
-	return this->_key;
-}
-
-int	Channel::getLimit() const
-{
-	return this->_limit;
-}
-
-s_mode  *Channel::getModes()
-{
-	return &this->_modes;
-}
-
 void    Channel::sendMsgExcept(Client *c, const std::string &msg)
 {
     for (int i = 0; i < this->_clients.size(); i++)
@@ -142,11 +126,81 @@ void    Channel::sendMsgExcept(Client *c, const std::string &msg)
     }
 }
 
-void	Channel::setChannelModes(Client *client)
+s_mode  *Channel::getModes()
 {
-	//set the modes of the channel
-	//set the creator of the channel
-	//set the key of the channel
-	//set the limit of the channel
-	//set the modes of the channel
+	return &this->_modes;
+}
+
+void	Channel::setKey(const std::string &key)
+{
+	this->_key = key;
+}
+
+void	Channel::removeKey()
+{
+	this->_key = "";
+}
+
+const std::string	&Channel::getKey() const
+{
+	return this->_key;
+}
+
+void	Channel::setLimit(int limit)
+{
+	this->_limit = limit;
+}
+
+void	Channel::removeLimit()
+{
+	this->_limit = -1;
+}
+
+int	Channel::getLimit() const
+{
+	return this->_limit;
+}
+
+void	Channel::setInviteOnly(bool inviteOnly)
+{
+	this->_modes.inviteOnly = inviteOnly;
+}
+
+bool	Channel::isInviteOnly() const
+{
+	return this->_modes.inviteOnly;
+}
+
+void	Channel::setTopicLock(bool topicLock)
+{
+	this->_modes.topicLock = topicLock;
+}
+
+bool	Channel::isTopicLocked() const
+{
+	return this->_modes.topicLock;
+}
+
+const std::string	&Channel::gettopicLock() const
+{
+	return this->_modes.Topic;
+}
+
+void	Channel::addOperator(Client *client)
+{
+	//std::deque<Client*>::iterator it = std::find(_operators.begin(), _operators.end(), client);
+	//if (it == _operators.end())
+	this->_operators.push_back(client);
+}
+
+void	Channel::removeOperator(Client *client)
+{
+	for (int i = 0; i < this->_operators.size(); i++)
+	{
+		if (this->_operators[i] == client)
+		{
+			this->_operators.erase(this->_operators.begin() + i);
+			return;
+		}
+	}
 }

@@ -305,7 +305,7 @@ void Server::createChannel(const std::string &name)
 		std::cout << "DEBUG 2" << std::endl;
 		this->_channels[this->_channels.size() - 1].getModes()->chanCreator = client->getNickName();
 		std::cout << "DEBUG 3" << std::endl;
-		this->_channels[this->_channels.size() - 1].getModes()->topicChannel = true;
+		this->_channels[this->_channels.size() - 1].getModes()->topicLock = true;
 		std::cout << "DEBUG 4" << std::endl;
 		this->_channels[this->_channels.size() - 1].getOperators()->push_back(client);
 		std::cout << "DEBUG 5" << std::endl;

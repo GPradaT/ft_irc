@@ -13,8 +13,9 @@ void	ChnlTopicCmd::execute(Client *client, const IRCMessage &message)
 {
 	std::string channelName = message.getParams()[0];
 	std::string topic = message.getTrailing();
-	std::string msg = ":" + client->getNickName() + " TOPIC " + channelName + " " + topic + "\r\n";
-	if (Server::Singleton().getChannelByName(channelName)->getModes()->topicChannel == false)
+	std::string msg = "TOPIC " + channelName + " " + topic + "\r\n";
+	//std::string msg = ":" + client->getNickName() + " TOPIC " + channelName + " " + topic + "\r\n";
+	if (Server::Singleton().getChannelByName(channelName)->getModes()->topicLock == false)
 	{
 		if (Server::Singleton().getChannelByName(channelName)->isOperator(client) == false)
 		{
