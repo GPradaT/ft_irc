@@ -12,9 +12,10 @@ ChnlModeCmd::~ChnlModeCmd()
 
 void	ChnlModeCmd::execute(Client *client, IRCMessage const &message)
 {
-	std::string modes = message.getParams()[1];
+	std::cout << "IN CHNLMODECMD EXECUTE" << std::endl;
+	std::string modes = message.getParams()[1].substr(1, message.getParams()[1].size());
 	Channel *channel = Server::Singleton().getChannelByName(message.getParams()[0]);
-	size_t paramIndex = 0;
+	size_t paramIndex = 2;
 
 	std::string modesToApply = "";
 	std::vector<std::string> paramsToApply;
@@ -24,13 +25,14 @@ void	ChnlModeCmd::execute(Client *client, IRCMessage const &message)
 	std::string modeMessage = ":" + client->getNickName() + " MODE " + message.getParams()[0] + " " + modesToApply;
 	for (size_t i = 0; i < paramsToApply.size(); ++i)
 		modeMessage += " " + paramsToApply[i];
-	modeMessage += "\r\n";
 	std::cout << modeMessage << std::endl;
+	modeMessage += "\r\n";
 	channel->sendToAll(modeMessage);
 }
 
 bool	ChnlModeCmd::validate(IRCMessage const&msg)
 {
+	std::cout << "IN CHNLMODECMD VALIDATE" << std::endl;
 	Client *client = Server::Singleton().getClientByFd(Server::Singleton().getCurrentFd());
 	std::string message;
 	if (msg.getParams().empty() || msg.getParams().size() < 1)
@@ -66,6 +68,7 @@ bool	ChnlModeCmd::validate(IRCMessage const&msg)
 	{
 		message = ":Server 324 " + client->getNickName() + " " + channelName + " " + MODES + "\r\n";
 		Server::Singleton().sendMsg(client,message);
+		return true;
 	}
 	std::string modes = msg.getParams()[1];
 	//std::cout << "Modes: " << modes << std::endl;
@@ -75,22 +78,24 @@ bool	ChnlModeCmd::validate(IRCMessage const&msg)
 
 bool	ChnlModeCmd::parseModes(const std::string &modes, const std::vector<std::string> &params, size_t &paramIndex, Client *client, Channel *channel, std::string &modesToApply, std::vector<std::string> &paramsToApply)
 {
+	std::cout << "IN PARSEMODES" << std::endl;
 	bool	success = true;
 	bool	adding = true;
 	std::string msg;
 	for (size_t i = 0; i < modes.size(); ++i)
 	{
-		std::cout << "modes[i]: " << modes[i] << std::endl;
+		std::cout << "modes[i]: [" << modes[i] << "]" << std::endl;
 		if (modes[i] == '+')
 			adding = true;
 		else if (modes[i] == '-')
 			adding = false;
-		else
+		else if (modes[i] != '\0')
 		{
-			std::cout << "modes: " << modes << std::endl;
+			std::cout << "i: " << i << std::endl;
+			std::cout << "modes[i]: [" << modes[i] << "]" << std::endl;
 			if (!isValidMode(modes[i]))
 			{
-				msg = "472 " + client->getNickName() + " MODE :is unknown mode char to me " + modes[i] + "\r\n";
+				msg = ":" + client->getNickName() + " 472 " + client->getNickName() + " MODE :is unknown mode char to me " + modes[i] + "\r\n";
 				Server::Singleton().sendMsg(client, msg);
 				success = false;
 				continue;
@@ -119,6 +124,7 @@ bool	ChnlModeCmd::parseModes(const std::string &modes, const std::vector<std::st
 
 void	ChnlModeCmd::applyModes(Channel *channel, const std::string &modesToApply, const std::vector<std::string> &paramsToApply, Client *client)
 {
+	std::cout << "IN APPLYMODES" << std::endl;
 	bool adding = true;
 	size_t paramIndex = 0;
 	std::cout << "Suposed modes to apply: " << modesToApply << std::endl;
@@ -176,6 +182,7 @@ bool	ChnlModeCmd::isValidMode(char mode)
 		if (mode == validModes[i])
 			return true;
 	}
+	std::cout << "INVALID MODE (int): " << static_cast<int>(mode) << std::endl;
 	return false;
 }
 
