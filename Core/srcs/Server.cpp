@@ -30,7 +30,7 @@ Server::~Server()
     //delete this->_commands["WHO"];
     delete this->_commands["QUIT"];
     delete this->_commands["NOTICE"];
-    //delete this->_commands["MODE"];
+    delete this->_commands["MODE"];
     delete this->_commands["KICK"];
     delete this->_commands["INVITE"];
     delete this->_commands["TOPIC"];
@@ -45,17 +45,17 @@ int Server::initialize(const std::string &psswd, const unsigned short &port)
     this->_commands["JOIN"] = new ChnlJoinCmd();
     //this->_commands["WHO"] = new ChnlWhoCmd();
     this->_commands["QUIT"] = new QuitCommand();
-    //this->_commands["MODE"] = new ChnlModeCmd();
+    this->_commands["MODE"] = new ChnlModeCmd();
     this->_commands["KICK"] = new ChnlKickCmd();
     this->_commands["INVITE"] = new ChnlInviteCmd();
     this->_commands["TOPIC"] = new ChnlTopicCmd();
     this->_commands["PART"] = new ChnlPartCmd();
 
-    std::set<unsigned short> occupiedPorts = {80, 443, 21, 22, 25, 110, 143, 993, 995};
-    if (occupiedPorts.find(port) != occupiedPorts.end())
-    {
-        throw std::runtime_error("Port " + std::to_string(port) + " is commonly occupied. Please choose a different port.");
-    }
+    //std::set<unsigned short> occupiedPorts = {80, 443, 21, 22, 25, 110, 143, 993, 995};
+    //if (occupiedPorts.find(port) != occupiedPorts.end())
+    //{
+    //    throw std::runtime_error("Port " + std::to_string(port) + " is commonly occupied. Please choose a different port.");
+    //}
 
     std::cout << this->_fds.size();
     this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0);

@@ -14,9 +14,9 @@ void	ChnlModeCmd::execute(Client *client, IRCMessage const &message)
 {
 	std::string modes = message.getParams()[1];
 	Channel *channel = Server::Singleton().getChannelByName(message.getParams()[0]);
-	size_t paramIndex = 2;
+	size_t paramIndex = 0;
 
-	std::string modesToApply;
+	std::string modesToApply = "";
 	std::vector<std::string> paramsToApply;
 	if (!parseModes(modes, message.getParams(), paramIndex, client, channel, modesToApply, paramsToApply))
 		return ;
@@ -25,6 +25,7 @@ void	ChnlModeCmd::execute(Client *client, IRCMessage const &message)
 	for (size_t i = 0; i < paramsToApply.size(); ++i)
 		modeMessage += " " + paramsToApply[i];
 	modeMessage += "\r\n";
+	std::cout << modeMessage << std::endl;
 	channel->sendToAll(modeMessage);
 }
 
@@ -79,6 +80,7 @@ bool	ChnlModeCmd::parseModes(const std::string &modes, const std::vector<std::st
 	std::string msg;
 	for (size_t i = 0; i < modes.size(); ++i)
 	{
+		std::cout << "modes[i]: " << modes[i] << std::endl;
 		if (modes[i] == '+')
 			adding = true;
 		else if (modes[i] == '-')
@@ -88,13 +90,13 @@ bool	ChnlModeCmd::parseModes(const std::string &modes, const std::vector<std::st
 			std::cout << "modes: " << modes << std::endl;
 			if (!isValidMode(modes[i]))
 			{
-				msg = ":Server 472 " + client->getNickName() + " MODE :is unknown mode char to me\r\n";
+				msg = "472 " + client->getNickName() + " MODE :is unknown mode char to me " + modes[i] + "\r\n";
 				Server::Singleton().sendMsg(client, msg);
 				success = false;
 				continue;
 			}
 			std::string param;
-			if (modes[i] == 'o' || modes[i] == 'k' || (modes[i] == 'l' && adding))
+			if (modeRequiresParam(modes[i], adding))
 			{
 				if (paramIndex >= params.size())
 				{
@@ -105,9 +107,11 @@ bool	ChnlModeCmd::parseModes(const std::string &modes, const std::vector<std::st
 				}
 				param = params[paramIndex++];
 			}
-			modesToApply += ((adding ? "+" : "-") + modes[i]);
-			if (modes[i] == 'o' || modes[i] == 'k' || (modes[i] == 'l' && adding))
+			modesToApply += (adding ? "+" : "-");
+			modesToApply += modes[i];
+			if (modeRequiresParam(modes[i], adding))
 				paramsToApply.push_back(param);
+			std::cout << "Actual Value of modesToApply: " << modesToApply << std::endl;
 		}
 	}
 	return success;
@@ -117,6 +121,7 @@ void	ChnlModeCmd::applyModes(Channel *channel, const std::string &modesToApply, 
 {
 	bool adding = true;
 	size_t paramIndex = 0;
+	std::cout << "Suposed modes to apply: " << modesToApply << std::endl;
 	for (size_t i = 0; i < modesToApply.size(); ++i)
 	{
 		if (modesToApply[i] == '+')
@@ -157,6 +162,7 @@ void	ChnlModeCmd::applyModes(Channel *channel, const std::string &modesToApply, 
 						else
 							channel->removeOperator(toSet);
 					}
+					break;
 			}
 		}
 	}
@@ -165,7 +171,12 @@ void	ChnlModeCmd::applyModes(Channel *channel, const std::string &modesToApply, 
 bool	ChnlModeCmd::isValidMode(char mode)
 {
 	std::string validModes = "itkol";
-	return validModes.find(mode) != std::string::npos;
+	for (size_t i = 0; i < validModes.size(); ++i)
+	{
+		if (mode == validModes[i])
+			return true;
+	}
+	return false;
 }
 
 bool	ChnlModeCmd::modeRequiresParam(char mode, bool adding)
