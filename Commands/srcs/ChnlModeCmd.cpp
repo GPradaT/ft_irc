@@ -48,11 +48,29 @@ void	ChnlModeCmd::execute(Client *client, IRCMessage const &message)
 
 bool	ChnlModeCmd::validate(IRCMessage const&msg)
 {
-	struct pollfd	*_clFd = Server::Singleton().getCurrentFd();
-	Client *client = Server::Singleton().getClientByFd(_clFd);
+	Client *client = Server::Singleton().getClientByFd(Server::Singleton().getCurrentFd());
 
-	std::cout << "Params[0]: " << msg.getParams()[0] << std::endl;
-	std::cout << "Params[1]: " << msg.getParams()[1] << std::endl;
+	if (msg.getParams().empty() || msg.getParams().size() < 2)
+	{
+		Server::Singleton().sendMsg(client, " MODE :Not enough parameters\r\n");
+		return false;
+	}
+
+	std::string channelName = msg.getParams()[0];
+	std::string modes = msg.getParams()[1];
+	std::string message;
+
+	std::cout << "ChannelName/Nickname: " << channelName << std::endl;
+	std::cout << "Modes: " << modes << std::endl;
+
+	if (Server::Singleton().getChannelByName(channelName) == 0)
+	{
+		message = "ERR_NOSUCHCHANNEL :No such channel";
+		std::cout << "ERR_NOSUCHCHANNEL :No such channel" << std::endl;
+		Server::Singleton().sendMsg(client, message + "\r\n");
+		return false;
+	}
+
 	//if (msg.getParams().size() < 2)
 	//{
 	//	std::cout << "Params[0]: " << msg.getParams()[0] << std::endl;
@@ -60,12 +78,6 @@ bool	ChnlModeCmd::validate(IRCMessage const&msg)
 	//	Server::Singleton().sendMsg(_client, "ERR_NEEDMOREPARAMS MODE :Not enough parameters\r\n");
 	//	return false;
 	//}
-	if (msg.getParams().empty())
-	{
-		if (client)
-			Server::Singleton().sendMsg(client, "461 " + client->getNickName() + " MODE :Not enough parameters\r\n");
-		return false;
-	}
 	std::cout << "paso de aqui" << std::endl;
 	execute(client, msg);
 	//if (msg.getParams()[1][1] != '#') // Si es un modo de usuario
