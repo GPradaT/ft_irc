@@ -121,6 +121,7 @@ void Server::serverLoop()
                 while (std::getline(ss, line, '\n'))
                 {
                     IRCMessage message(line);
+					message.clean();
                     // if (message.getIsValid())
                     Server::Singleton() *= message;
                     if (Server::Singleton()[i]->fd == -1)
