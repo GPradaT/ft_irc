@@ -53,6 +53,18 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 	{
 		Server::Singleton() += str;
 	}
+	else
+	{
+		Channel *chan = Server::Singleton().getChannelByName(str);
+		std::string key = "";
+		if (msg.getParams().size() > 1)
+			key = msg.getParams()[1];
+		if (chan->getKey() != key)
+		{
+			Server::Singleton().sendMsg(_client, "ERR_BADCHANNELKEY " + _client->getNickName() + " " + str + ":Cannot join channel (+k)\r\n");
+			return false;
+		}
+	}
 	if (Server::Singleton().getChannelByName(str)->getModes()->inviteOnly == false) //check channel permissions;
 	{
 		//en caso de que se mueva el cliente, lo quitamos del channel en el que este y luego lo anadimos al nuevo
