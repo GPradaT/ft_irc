@@ -3,6 +3,9 @@
 
 IRCMessage::IRCMessage(const std::string &buffer)
 {
+	std::string mutableBuffer = buffer;
+	mutableBuffer.erase(std::remove(mutableBuffer.begin(), mutableBuffer.end(), '\r'), mutableBuffer.end());
+	mutableBuffer.erase(std::remove(mutableBuffer.begin(), mutableBuffer.end(), '\n'), mutableBuffer.end());
 	parseMessage(buffer);
 }
 
@@ -239,23 +242,23 @@ void	IRCMessage::print() const
 	std::cout << "Trailing: " << _trailing << std::endl;
 }
 
-void	IRCMessage::clean()
-{
+//void	IRCMessage::clean()
+//{
 
-	_prefix.erase(std::remove(_prefix.begin (), _prefix.end (), '\r'), _prefix.end());
-	_prefix.erase(std::remove(_prefix.begin (), _prefix.end (), '\n'), _prefix.end());
+//	_prefix.erase(std::remove(_prefix.begin (), _prefix.end (), '\r'), _prefix.end());
+//	_prefix.erase(std::remove(_prefix.begin (), _prefix.end (), '\n'), _prefix.end());
 
-	_command.erase(std::remove(_command.begin (), _command.end (), '\r'), _command.end());
-	_command.erase(std::remove(_command.begin (), _command.end (), '\r'), _command.end());
+//	_command.erase(std::remove(_command.begin (), _command.end (), '\r'), _command.end());
+//	_command.erase(std::remove(_command.begin (), _command.end (), '\r'), _command.end());
 
-	for (size_t i = 0; i < _params.size(); ++i)
-	{
-		_params[i].erase(std::remove(_params[i].begin (), _params[i].end (), '\r'), _params[i].end());
-		_params[i].erase(std::remove(_params[i].begin (), _params[i].end (), '\n'), _params[i].end());
-	}
+//	for (size_t i = 0; i < _params.size(); ++i)
+//	{
+//		_params[i].erase(std::remove(_params[i].begin (), _params[i].end (), '\r'), _params[i].end());
+//		_params[i].erase(std::remove(_params[i].begin (), _params[i].end (), '\n'), _params[i].end());
+//	}
 
-	_trailing.erase(std::remove(_trailing.begin (), _trailing.end (), '\r'), _trailing.end());
-}
+//	_trailing.erase(std::remove(_trailing.begin (), _trailing.end (), '\r'), _trailing.end());
+//}
 
 
 //PART OF OLD CONSTRUCTOR
