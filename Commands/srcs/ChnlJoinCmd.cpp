@@ -25,7 +25,7 @@ void	ChnlJoinCmd::execute(Client *client, IRCMessage const&message)
 			Client *to = (*chan->getClientsFromChannel())[i];
 			chan->sendToAll(":Server 353 " + client->getNickName() + " = " + chan->getChannelName() + " :@" + to->getNickName() + "\r\n");
 		}
-		chan->sendToAll(":Server 366 " + client->getNickName() + " " + chan->getChannelName() + " :End of /NAMES list\r\n");	
+		chan->sendToAll(":Server 366 " + client->getNickName() + " " + chan->getChannelName() + " :End of /NAMES list\r\n");
 	}
 }
 
@@ -38,14 +38,15 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 	std::string str = msg.getParams()[0];
 	str.erase(std::remove(str.begin (), str.end (), '\r'), str.end());
 	str.erase(std::remove(str.begin (), str.end (), '\n'), str.end());
+	std::cout << "el nombre del canal es -> [" << str <<  "] y el size de la string es -> " << str.length() << std::endl;
 	if (!_client->isVerified() /*|| (_client->isVerified() && (_client->getNickName().empty() || _client->getRealName().empty()))*/)
 	{
-		Server::Singleton().sendMsg(_client, "ERR_NOTREGISTERED :You have not registered\r\n");
+		Server::Singleton().sendMsg(_client, ":" + _client->getNickName() + " ERR_NOTREGISTERED :You have not registered\r\n");
 		return false;
 	}
-	if (msg.getParams().size() < 1)
+	if (msg.getParams().size() < 1 || str.length() <= 1)
 	{
-		Server::Singleton().sendMsg(_client, "ERR_NEEDMOREPARAMS JOIN :Not enough parameters\r\n");
+		Server::Singleton().sendMsg(_client, ":" + _client->getNickName() + " ERR_NEEDMOREPARAMS JOIN :Not enough parameters\r\n");
 		return false;
 	}
 	if (Server::Singleton().getChannelByName(str) == 0)

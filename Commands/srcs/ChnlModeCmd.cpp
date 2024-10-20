@@ -13,7 +13,7 @@ ChnlModeCmd::~ChnlModeCmd()
 void	ChnlModeCmd::execute(Client *client, IRCMessage const &message)
 {
 	std::cout << "IN CHNLMODECMD EXECUTE" << std::endl;
-	std::string modes = message.getParams()[1].substr(1, message.getParams()[1].size());
+	std::string modes = message.getParams()[1];//.substr(0, message.getParams()[1].size())
 	Channel *channel = Server::Singleton().getChannelByName(message.getParams()[0]);
 	size_t paramIndex = 2;
 
@@ -93,7 +93,7 @@ bool	ChnlModeCmd::parseModes(const std::string &modes, const std::vector<std::st
 		{
 			std::cout << "i: " << i << std::endl;
 			std::cout << "modes[i]: [" << modes[i] << "]" << std::endl;
-			if (!isValidMode(modes[i]))
+			if (!isValidMode(modes[i]) && !std::iscntrl(modes[i]))
 			{
 				msg = ":" + client->getNickName() + " 472 " + client->getNickName() + " MODE :is unknown mode char to me " + modes[i] + "\r\n";
 				Server::Singleton().sendMsg(client, msg);
@@ -105,7 +105,7 @@ bool	ChnlModeCmd::parseModes(const std::string &modes, const std::vector<std::st
 			{
 				if (paramIndex >= params.size())
 				{
-					msg = ":Server 461 " + client->getNickName() + " MODE :Not enough parameters for mode " + modes[i] +  "\r\n";
+					msg = ":" + client->getNickName() + " 461 " + client->getNickName() + " MODE :Not enough parameters for mode " + modes[i] +  "\r\n";
 					Server::Singleton().sendMsg(client, msg);
 					success = false;
 					continue;
