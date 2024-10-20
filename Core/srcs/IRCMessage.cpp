@@ -6,7 +6,7 @@ IRCMessage::IRCMessage(const std::string &buffer)
 	std::string mutableBuffer = buffer;
 	mutableBuffer.erase(std::remove(mutableBuffer.begin(), mutableBuffer.end(), '\r'), mutableBuffer.end());
 	mutableBuffer.erase(std::remove(mutableBuffer.begin(), mutableBuffer.end(), '\n'), mutableBuffer.end());
-	parseMessage(buffer);
+	parseMessage(mutableBuffer);
 }
 
 IRCMessage::~IRCMessage() {}
