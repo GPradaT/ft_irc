@@ -28,19 +28,19 @@ bool	ChnlPartCmd::validate(IRCMessage const&msg)
 	Channel *chan = Server::Singleton().getChannelByName(str);
 	if (msg.getParams().size() == 0 || msg.getParams()[0].empty())
 	{
-		response += ":Server ERR_NEEDMOREPARAMS " + _client->getNickName() + " " + msg.getCommand() + " :Not enough parameters\r\n";
+		response += ": Server 461 " + _client->getNickName() + " " + msg.getCommand() + " :Not enough parameters\r\n";
 		Server::Singleton().sendMsg(_client, response);
 		return false;
 	}
 	if (chan == 0)
 	{
-		response += ":Server ERR_NOSUCHCHANNEL " + _client->getNickName() + " " + str + " :No such channel\r\n";
+		response += ": Server 403 " + _client->getNickName() + " " + str + " :No such channel\r\n";
 		Server::Singleton().sendMsg(_client, response);
 		return false;
 	}
 	if (chan->getClientByNickName(_client->getNickName()) == 0)
 	{
-		response += ":Server ERR_NOTONCHANNEL " + _client->getNickName() + " " + str + " :You're not on that channel\r\n";
+		response += ": Server 442 " + _client->getNickName() + " " + str + " :You're not on that channel\r\n";
 		Server::Singleton().sendMsg(_client, response);
 		return false;
 	}

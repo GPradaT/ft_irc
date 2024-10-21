@@ -25,7 +25,7 @@ bool	ChnlKickCmd::validate(IRCMessage const&msg)
 	std::string message;
 	if (msg.getParams().size() < 3)
 	{
-		message = ":" + client->getNickName() + "ERR_NEEDMOREPARAMS KICK :Not enough parameters\r\n";
+		message = ": " + client->getNickName() + " 461 KICK :Not enough parameters\r\n";
 		Server::Singleton().sendMsg(client, message);
 		return false;
 	}
@@ -33,19 +33,19 @@ bool	ChnlKickCmd::validate(IRCMessage const&msg)
 	std::string nickToKick = msg.getParams()[1];
 	if (Server::Singleton().getChannelByName(channelName) == 0)
 	{
-		message = ":" + client->getNickName() + "ERR_NOSUCHCHANNEL :No such channel\r\n";
+		message = ": " + client->getNickName() + " 403 :No such channel\r\n";
 		Server::Singleton().sendMsg(client, message);
 		return false;
 	}
 	if (Server::Singleton().getChannelByName(channelName)->isOperator(client) == false)
 	{
-		message = ":" + client->getNickName() + "ERR_CHANOPRIVSNEEDED :You're not channel operator\r\n";
+		message = ": " + client->getNickName() + " 482 :You're not channel operator\r\n";
 		Server::Singleton().sendMsg(client, message);
 		return false;
 	}
 	if (Server::Singleton().getClientByNickName(nickToKick) == 0)
 	{
-		message = ":" + client->getNickName() + "ERR_NOSUCHNICK :No such nick\r\n";
+		message = ": " + client->getNickName() + " 401 :No such nick\r\n";
 		Server::Singleton().sendMsg(client, message);
 		return false;
 	}
