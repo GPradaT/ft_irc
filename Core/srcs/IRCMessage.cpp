@@ -1,5 +1,6 @@
 
 #include "../includes/IRCMessage.hpp"
+#include<algorithm>
 
 IRCMessage::IRCMessage(const std::string &buffer)
 {
