@@ -33,10 +33,10 @@ bool	ChnlTopicCmd::validate(const IRCMessage &msg)
 {
 	Client *client = Server::Singleton().getClientByFd(Server::Singleton().getCurrentFd());
 	std::string message;
-	if (msg.getParams().size() < 1)
+	if (msg.getParams().empty())
 	{
 		std::cout << "ERRPARAMS 1" << std::endl;
-		message = ":" + client->getNickName() + "ERR_NEEDMOREPARAMS TOPIC :Not enough parameters\r\n";
+    	message = ": " + client->getNickName() + " 461 TOPIC :Not enough parameters\r\n";
 		Server::Singleton().sendMsg(client,message);
 		return false;
 	}
@@ -45,14 +45,14 @@ bool	ChnlTopicCmd::validate(const IRCMessage &msg)
 	if (Server::Singleton().getChannelByName(channelName) == 0)
 	{
 		std::cout << "ERRNOCHAN 2" << std::endl;
-		message = ":" + client->getNickName() + " ERR_NOSUCHCHANNEL " + client->getNickName() + " " + channelName + " :No such channel\r\n";
+		message = ": " + client->getNickName() + " 403" + " " + channelName + " :No such channel\r\n";
 		Server::Singleton().sendMsg(client, message);
 		return false;
 	}
 	if (Server::Singleton().getChannelByName(channelName)->getClientByNickName(client->getNickName()) == 0)
 	{
 		std::cout << "ERRNOTINCHAN 3" << std::endl;
-		message = ":ERR_NOTONCHANNEL " + client->getNickName() + " " + channelName + " :You're not on that channel\r\n";
+    	message = ": " + client->getNickName() + " 442 " + channelName + " :You're not on that channel\r\n";
 		Server::Singleton().sendMsg(client, message);
 		return false;
 	}
@@ -61,13 +61,13 @@ bool	ChnlTopicCmd::validate(const IRCMessage &msg)
 		std::cout << "RPLYES 4" << std::endl;
 		if (Server::Singleton().getChannelByName(channelName)->getModes()->Topic.empty())
 		{
-			message = ":Server RPL_NOTOPIC " + client->getNickName() + " " + channelName + " :No topic is set\r\n";
+        	message = ": Server 331 " + client->getNickName() + " " + channelName + " :No topic is set\r\n";
 			Server::Singleton().sendMsg(client, message);
 			return false;
 		}
 		else
 		{
-			message = ":" + client->getNickName() + "RPL_TOPIC :" + Server::Singleton().getChannelByName(channelName)->getModes()->Topic + "\r\n";
+        	message = ": " + client->getNickName() + " 332 " + channelName + " :" + Server::Singleton().getChannelByName(channelName)->getModes()->Topic + "\r\n";
 			Server::Singleton().sendMsg(client, message);
 			return false;
 		}
