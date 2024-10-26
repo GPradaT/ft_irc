@@ -2,7 +2,7 @@
 #include <signal.h>
 #include <set>
 #include <stdexcept>
-
+#include <sys/stat.h>
 
 #include "../includes/IRCMessage.hpp"
 #include "../../Commands/includes/AuthNickCmd.hpp"
@@ -99,8 +99,23 @@ void Server::serverLoop()
             Server::Singleton().setCurrentFd(Server::Singleton()[i]);
             if (Server::Singleton()[i]->revents == 0)
             {
-                std::cout << "entra aqui\n";
+                std::cout << "bucle\n";
                 continue;
+            }
+            if (i != 0)
+            {
+                char buf[1024];
+                int result = recv(Server::Singleton()[i]->fd, &buf, 1, MSG_PEEK);
+                if (result == 0)
+                {
+                    close(Server::Singleton()[i]->fd);
+                    Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[i]);
+                    Server::Singleton()[i]->fd = -1;
+                    Server::Singleton() -= Server::Singleton()[i];
+                    i--;
+                    counter--;
+                    continue;
+                }
             }
             if (Server::Singleton()[i]->fd == Server::Singleton().getServerSocket())
             {
@@ -121,6 +136,8 @@ void Server::serverLoop()
                 recVal = recv(Server::Singleton()[i]->fd, buffer, sizeof(buffer), 0);
                 if (recVal < 0)
                 {
+                    close(Server::Singleton()[i]->fd);
+                    Server::Singleton()[i]->fd = -1;
                     Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[i]);
                     Server::Singleton() -= Server::Singleton()[i];
                     i--;
