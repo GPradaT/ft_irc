@@ -31,7 +31,7 @@ void MsgPrivmsgCmd::execute(Client *client, IRCMessage const &message)
     if (targetClient)
     {
         std::string fullMsg = ":" + client->getNickName() + " PRIVMSG " + targetNick + " :" + msgContent + "\r\n";
-        Server::Singleton().sendMsg(client, fullMsg);
+        Server::Singleton().sendMsg(targetClient, fullMsg);
     }
     else
     {
