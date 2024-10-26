@@ -18,6 +18,8 @@ void AuthNickCmd::execute(Client *client, IRCMessage const&message)
 		client->setNick(str);
 	Server::Singleton().sendMsg(client, ":" + client->getNickName() + " NICK " + str + "\r\n");
 	client->setNick(str);
+	if (!client->isVerified() && client->getRealName() != "")
+		client->setVerified();
 }
 
 bool AuthNickCmd::validate(IRCMessage const&message)
@@ -27,15 +29,11 @@ bool AuthNickCmd::validate(IRCMessage const&message)
 	std::string str = message.getParams()[0];
 	str.erase(std::remove(str.begin (), str.end (), '\r'), str.end());
 	str.erase(std::remove(str.begin (), str.end (), '\n'), str.end());
-	if (!client->isVerified() && (!Server::Singleton().getPasswd().empty() || Server::Singleton().getPasswd() != ""))
+	if (!client->correctPwd() && (!Server::Singleton().getPasswd().empty() || Server::Singleton().getPasswd() != ""))
 	{
 		Server::Singleton().sendMsg(client, "ERR_PASSWDMISMATCH :Wrong Password\r\n");
 		Server::Singleton() -= client;
 		return false;
-	}
-	if (!client->isVerified())
-	{
-		client->setVerified();
 	}
 	if (str.empty())
 	{

@@ -3,6 +3,7 @@
 Client::Client()
 {
     this->_isVerified = false;
+    this->_correctPwd = false;
 }
 
 Client::~Client()
@@ -13,6 +14,16 @@ Client::~Client()
 bool			Client::operator==(const Client &n2)
 {
     return (this == &n2);
+}
+
+void			Client::setPwd()
+{
+    this->_correctPwd = true;
+}
+
+bool			Client::correctPwd()
+{
+    return this->_correctPwd;
 }
 
 std::string Client::getNickName()

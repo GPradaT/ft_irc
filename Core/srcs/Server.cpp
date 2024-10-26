@@ -6,6 +6,7 @@
 
 #include "../includes/IRCMessage.hpp"
 #include "../../Commands/includes/AuthNickCmd.hpp"
+#include "../../Commands/includes/AuthUserCmd.hpp"
 #include "../../Commands/includes/AuthPassCmd.hpp"
 #include "../../Commands/includes/MsgPrivmsgCmd.hpp"
 #include "../../Commands/includes/ChnlJoinCmd.hpp"
@@ -35,11 +36,13 @@ Server::~Server()
     delete this->_commands["INVITE"];
     delete this->_commands["TOPIC"];
     delete this->_commands["PART"];
+    delete this->_commands["USER"];
 }
 
 int Server::initialize(const std::string &psswd, const unsigned short &port)
 {
     this->_commands["NICK"] = new AuthNickCmd();
+    this->_commands["USER"] = new AuthUserCmd();
     this->_commands["PASS"] = new AuthPassCmd();
     this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
     this->_commands["JOIN"] = new ChnlJoinCmd();
@@ -127,6 +130,7 @@ void Server::serverLoop()
                     if (Server::Singleton()[i]->fd == -1)
                     {
                         Server::Singleton() -= Server::Singleton()[i];
+                        i--;
                         break;
                     }
                 }

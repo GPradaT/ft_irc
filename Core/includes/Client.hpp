@@ -19,6 +19,7 @@ class	Client
 		struct pollfd	*_fd;
 		bool			_isOperator;
 		bool			_isVerified;
+		bool			_correctPwd;
 	public:
 		bool			operator==(const Client &n2);
 
@@ -27,8 +28,10 @@ class	Client
 		std::string		getRealName();
 		bool			isOperator();
 		bool			isVerified();
+		bool			correctPwd();
 
 		void			setVerified();
+		void			setPwd();
 		void			setFd(struct pollfd *fd);
 		void			setNick(const std::string &name);
 		void			setReal(const std::string &name);

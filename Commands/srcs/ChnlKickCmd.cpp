@@ -16,6 +16,7 @@ void	ChnlKickCmd::execute(Client *client, IRCMessage const &message)
 	std::string reason = message.getTrailing();
 	std::string msg = ":" + client->getNickName() + " KICK " + channel->getChannelName() + " " + nickToKick + " :" + reason + "\r\n";
 	Server::Singleton().sendMsgAll(msg);
+	std::cout << "El mensjae de kick por parte del servidor: " << msg << std::endl;
 	(*channel) -= channel->getClientByNickName(nickToKick);
 }
 

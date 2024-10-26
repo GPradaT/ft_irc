@@ -11,7 +11,7 @@ AuthPassCmd::~AuthPassCmd()
 
 void AuthPassCmd::execute(Client *client, IRCMessage const&message)
 {
-	client->setVerified();
+	client->setPwd();
 }
 
 bool AuthPassCmd::validate(IRCMessage const&message)

@@ -6,7 +6,7 @@ Core/srcs/IRCMessage.cpp Commands/srcs/AuthNickCmd.cpp Commands/srcs/AuthPassCmd
 Commands/srcs/MsgPrivmsgCmd.cpp Commands/srcs/MessageCommand.cpp Commands/srcs/ChnlJoinCmd.cpp \
 Commands/srcs/ChnlWhoCmd.cpp Commands/srcs/ChnlModeCmd.cpp Commands/srcs/ChnlKickCmd.cpp \
 Commands/srcs/ChnlInviteCmd.cpp Commands/srcs/ChnlTopicCmd.cpp Commands/srcs/ClientQuitCmd.cpp \
-Commands/srcs/ChnlPartCmd.cpp
+Commands/srcs/ChnlPartCmd.cpp Commands/srcs/AuthUserCmd.cpp
 
 
 OBJ = $(SRC:.cpp=.o)
@@ -14,7 +14,7 @@ INCLUDES= Core/includes/Client.hpp Core/includes/Channel.hpp Core/includes/Serve
 Core/includes/IRCMessage.hpp Commands/includes/AuthNickCmd.hpp Commands/includes/AuthUserCmd.hpp \
 Commnds/includes/AuthPassCmd.hpp Commands/includes/AuthenticationCommand.hpp Commands/includes/MsgPrivmsgCmd.hpp \
 Commands/includes/MessageCommand.hpp Commands/srcs/ChnlJoinCmd.hpp Commands/srcs/ChnlWhoCmd.hpp \
-Commands/includes/ClientQuitCmd.hpp Commands/includes/ChnlPartCmd.hpp
+Commands/includes/ClientQuitCmd.hpp Commands/includes/ChnlPartCmd.hpp Commands/includes/AuthUserCmd.hpp
 
 all: $(NAME)
 
