@@ -23,7 +23,7 @@ bool	ChnlKickCmd::validate(IRCMessage const&msg)
 {
 	Client	*client = Server::Singleton().getClientByFd(Server::Singleton().getCurrentFd());
 	std::string message;
-	if (msg.getParams().size() < 3)
+	if (msg.getParams().size() < 2)
 	{
 		message = ": " + client->getNickName() + " 461 KICK :Not enough parameters\r\n";
 		Server::Singleton().sendMsg(client, message);
