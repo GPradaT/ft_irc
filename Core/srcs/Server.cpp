@@ -108,9 +108,8 @@ void Server::serverLoop()
                 int result = recv(Server::Singleton()[i]->fd, &buf, 1, MSG_PEEK);
                 if (result == 0)
                 {
-                    close(Server::Singleton()[i]->fd);
                     Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[i]);
-                    Server::Singleton()[i]->fd = -1;
+                    //Server::Singleton()[i]->fd = -1;
                     Server::Singleton() -= Server::Singleton()[i];
                     i--;
                     counter--;
@@ -136,8 +135,7 @@ void Server::serverLoop()
                 recVal = recv(Server::Singleton()[i]->fd, buffer, sizeof(buffer), 0);
                 if (recVal < 0)
                 {
-                    close(Server::Singleton()[i]->fd);
-                    Server::Singleton()[i]->fd = -1;
+                    //Server::Singleton()[i]->fd = -1;
                     Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[i]);
                     Server::Singleton() -= Server::Singleton()[i];
                     i--;
@@ -180,6 +178,7 @@ Server& Server::operator+=(std::string const& chanName)
 Server& Server::operator-=(Client *client)
 {
     //delete client
+    close(client->getFd()->fd);
     client->getFd()->fd = -1;
     for (int i = 0; i < this->_channels.size(); i++)
         this->_channels[i] -= client;
