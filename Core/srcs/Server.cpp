@@ -92,14 +92,16 @@ void Server::serverLoop()
     while (1)
     {
         polVal = poll(Server::Singleton()[0], Server::Singleton().getFdSize(), -1);
-        std::cout << Server::Singleton().getFdSize() << std::endl;
         Server::Singleton()[0]->events = POLLIN;
         counter = Server::Singleton().getFdSize();
         for (int i = 0; i < counter; i++)
         {
             Server::Singleton().setCurrentFd(Server::Singleton()[i]);
             if (Server::Singleton()[i]->revents == 0)
+            {
+                std::cout << "entra aqui\n";
                 continue;
+            }
             if (Server::Singleton()[i]->fd == Server::Singleton().getServerSocket())
             {
                 // Function to accept connection and create client
@@ -117,7 +119,15 @@ void Server::serverLoop()
                 char buffer[1024] = {0};
                 int recVal = 0;
                 recVal = recv(Server::Singleton()[i]->fd, buffer, sizeof(buffer), 0);
-                std::cout << buffer << std::endl;
+                if (recVal < 0)
+                {
+                    Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[i]);
+                    Server::Singleton() -= Server::Singleton()[i];
+                    i--;
+                    counter--;
+                    continue;
+                }
+                //std::cout << buffer << std::endl;
                 std::string str = buffer;
                 std::stringstream ss(str);
                 std::string line;
@@ -131,6 +141,7 @@ void Server::serverLoop()
                     {
                         Server::Singleton() -= Server::Singleton()[i];
                         i--;
+                        counter--;
                         break;
                     }
                 }
