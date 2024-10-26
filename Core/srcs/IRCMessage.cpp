@@ -234,13 +234,13 @@ const std::string	&IRCMessage::getTrailing() const
 
 void	IRCMessage::print() const
 {
-	//std::cout << "Prefix: " << _prefix << std::endl;
-	//std::cout << "Command: " << _command << std::endl;
-	//std::cout << "Params: ";
+	std::cout << "Prefix: " << _prefix << std::endl;
+	std::cout << "Command: " << _command << std::endl;
+	std::cout << "Params: ";
 	for (size_t i = 0; i < _params.size(); ++i)
-		//std::cout << "Params[" << i << "].size() = " << _params[i].size() << "   " << _params[i] << "\n";
-	//std::cout << std::endl;
-	//std::cout << "Trailing: " << _trailing << std::endl;
+		std::cout << "Params[" << i << "].size() = " << _params[i].size() << "   " << _params[i] << "\n";
+	std::cout << std::endl;
+	std::cout << "Trailing: " << _trailing << std::endl;
 }
 
 //void	IRCMessage::clean()
