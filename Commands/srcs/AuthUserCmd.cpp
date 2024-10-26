@@ -17,7 +17,7 @@ void AuthUserCmd::execute(Client *client, IRCMessage const&message)
 	client->setReal(str);
 	if (!client->isVerified() && client->getNickName() != "")
 		client->setVerified();
-	std::cout << "UserName: " << client->getRealName() << " | NickName: " << client->getNickName() << std::endl;
+	// //std::cout << "UserName: " << client->getRealName() << " | NickName: " << client->getNickName() << std::endl;
 }
 
 bool AuthUserCmd::validate(IRCMessage const&message)

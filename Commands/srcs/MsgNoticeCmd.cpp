@@ -33,7 +33,7 @@ void MsgNoticeCmd::execute(Client *client, IRCMessage const &message)
 {
     std::string targetNick = message.getParams()[0];
     std::string msgContent = message.getTrailing();
-    std::cout << "Mensaje privado de " << client->getNickName() << " a " << targetNick << ": " << msgContent << std::endl;
+    //std::cout << "Mensaje privado de " << client->getNickName() << " a " << targetNick << ": " << msgContent << std::endl;
 
     Client *targetClient = Server::Singleton().getClientByNickName(targetNick);
     if (targetClient)

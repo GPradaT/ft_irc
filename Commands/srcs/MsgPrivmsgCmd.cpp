@@ -26,7 +26,7 @@ void MsgPrivmsgCmd::execute(Client *client, IRCMessage const &message)
 {
     std::string targetNick = message.getParams()[0];
     std::string msgContent = message.getTrailing();
-    std::cout << "nick es --> " << client->getNickName() << std::endl;
+    //std::cout << "nick es --> " << client->getNickName() << std::endl;
     Client *targetClient = Server::Singleton().getClientByNickName(targetNick);
     if (targetClient)
     {

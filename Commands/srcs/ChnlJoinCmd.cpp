@@ -38,7 +38,7 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 	std::string str = msg.getParams()[0];
 	str.erase(std::remove(str.begin (), str.end (), '\r'), str.end());
 	str.erase(std::remove(str.begin (), str.end (), '\n'), str.end());
-	std::cout << "el nombre del canal es -> [" << str <<  "] y el size de la string es -> " << str.length() << std::endl;
+	// //std::cout << "el nombre del canal es -> [" << str <<  "] y el size de la string es -> " << str.length() << std::endl;
 	if (!_client->isVerified() /*|| (_client->isVerified() && (_client->getNickName().empty() || _client->getRealName().empty()))*/)
 	{
 		Server::Singleton().sendMsg(_client, ":" + _client->getNickName() + " ERR_NOTREGISTERED :You have not registered\r\n");
@@ -74,7 +74,7 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 		Channel *chan = Server::Singleton().getChannelByName(str);
 		if (chan->getClientByNickName(_client->getNickName()) == 0)
 			*chan += _client;
-		std::cout << "hay esta cantidad de cleintes en el chan ---> " << chan->getClientsFromChannel()->size() << std::endl;
+		// //std::cout << "hay esta cantidad de cleintes en el chan ---> " << chan->getClientsFromChannel()->size() << std::endl;
 	}
 	else
 	{

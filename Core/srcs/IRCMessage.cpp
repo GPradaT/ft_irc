@@ -142,7 +142,7 @@ void	IRCMessage::parseMessage(const std::string &buffer)
 			std::string param = buffer.substr(pos, param_end - pos);
 			if (!isValidMiddleParam(param))
 			{
-				std::cout << "Param: " << param << std::endl;
+				//std::cout << "Param: " << param << std::endl;
 				_isValid = false;
 				return;
 			}
@@ -198,7 +198,7 @@ bool	IRCMessage::isValidMiddleParam(const std::string &param)
 	{
 		if (param[i] == ' ' || param[i] == ':')
 		{
-			std::cout << static_cast<int>(param[i]) << std::endl;
+			//std::cout << static_cast<int>(param[i]) << std::endl;
 			return false;
 		}
 	}
@@ -234,13 +234,13 @@ const std::string	&IRCMessage::getTrailing() const
 
 void	IRCMessage::print() const
 {
-	std::cout << "Prefix: " << _prefix << std::endl;
-	std::cout << "Command: " << _command << std::endl;
-	std::cout << "Params: ";
+	//std::cout << "Prefix: " << _prefix << std::endl;
+	//std::cout << "Command: " << _command << std::endl;
+	//std::cout << "Params: ";
 	for (size_t i = 0; i < _params.size(); ++i)
-		std::cout << "Params[" << i << "].size() = " << _params[i].size() << "   " << _params[i] << "\n";
-	std::cout << std::endl;
-	std::cout << "Trailing: " << _trailing << std::endl;
+		//std::cout << "Params[" << i << "].size() = " << _params[i].size() << "   " << _params[i] << "\n";
+	//std::cout << std::endl;
+	//std::cout << "Trailing: " << _trailing << std::endl;
 }
 
 //void	IRCMessage::clean()

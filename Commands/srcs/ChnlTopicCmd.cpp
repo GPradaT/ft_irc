@@ -35,30 +35,30 @@ bool	ChnlTopicCmd::validate(const IRCMessage &msg)
 	std::string message;
 	if (msg.getParams().empty())
 	{
-		std::cout << "ERRPARAMS 1" << std::endl;
+		//std::cout << "ERRPARAMS 1" << std::endl;
     	message = ": " + client->getNickName() + " 461 TOPIC :Not enough parameters\r\n";
 		Server::Singleton().sendMsg(client,message);
 		return false;
 	}
 	std::string channelName = msg.getParams()[0];
-	std::cout << channelName << std::endl;
+	//std::cout << channelName << std::endl;
 	if (Server::Singleton().getChannelByName(channelName) == 0)
 	{
-		std::cout << "ERRNOCHAN 2" << std::endl;
+		//std::cout << "ERRNOCHAN 2" << std::endl;
 		message = ": " + client->getNickName() + " 403" + " " + channelName + " :No such channel\r\n";
 		Server::Singleton().sendMsg(client, message);
 		return false;
 	}
 	if (Server::Singleton().getChannelByName(channelName)->getClientByNickName(client->getNickName()) == 0)
 	{
-		std::cout << "ERRNOTINCHAN 3" << std::endl;
+		//std::cout << "ERRNOTINCHAN 3" << std::endl;
     	message = ": " + client->getNickName() + " 442 " + channelName + " :You're not on that channel\r\n";
 		Server::Singleton().sendMsg(client, message);
 		return false;
 	}
 	if (msg.getTrailing().empty() && msg.getParams().size() == 1)
 	{
-		std::cout << "RPLYES 4" << std::endl;
+		//std::cout << "RPLYES 4" << std::endl;
 		if (Server::Singleton().getChannelByName(channelName)->getModes()->Topic.empty())
 		{
         	message = ": Server 331 " + client->getNickName() + " " + channelName + " :No topic is set\r\n";

@@ -44,7 +44,7 @@ bool	Channel::isOperator(Client *client) const
 {
 	for (int i = 0; i < _operators.size(); ++i)
 	{
-		std::cout << "operator: " << _operators[i]->getNickName() << std::endl;
+		//std::cout << "operator: " << _operators[i]->getNickName() << std::endl;
 		if (_operators[i] == client)
 			return true;
 	}
@@ -120,7 +120,7 @@ void    Channel::sendMsgExcept(Client *c, const std::string &msg)
         Client *cli = this->_clients[i];
         if (c != cli)
         {
-            std::cout << "name to send is " << this->_clients.size() << std::endl;
+            //std::cout << "name to send is " << this->_clients.size() << std::endl;
             Server::Singleton().sendMsg(cli, msg);
         }
     }
