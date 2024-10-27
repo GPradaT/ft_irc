@@ -94,7 +94,7 @@ void Server::serverLoop()
         polVal = poll(Server::Singleton()[0], Server::Singleton().getFdSize(), -1);
         Server::Singleton()[0]->events = POLLIN;
         counter = Server::Singleton().getFdSize();
-        for (int i = 0; i < counter; i++)
+        for (int i = 0; i < Server::Singleton().getFdSize(); i++)
         {
             Server::Singleton().setCurrentFd(Server::Singleton()[i]);
             if (Server::Singleton()[i]->revents == 0)
@@ -109,11 +109,14 @@ void Server::serverLoop()
                 int result = recv(Server::Singleton()[i]->fd, &buf, 1, MSG_PEEK);
                 if (result == 0)
                 {
-                    Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[i]);
+                    //std::cout << "count es " << counter << " and acutal size is " << Server::Singleton().getFdSize() << std::endl;
+                    if (Server::Singleton().getClientByFd(Server::Singleton()[i]))
+                        Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[i]);
+                    Server::Singleton()[i]->fd = -1;
                     Server::Singleton() -= Server::Singleton()[i];
-                    i--;
+                    //i--;
                     counter--;
-                    break;
+                    continue;
                 }
             }
             if (Server::Singleton()[i]->fd == Server::Singleton().getServerSocket())
@@ -138,9 +141,9 @@ void Server::serverLoop()
                     //Server::Singleton()[i]->fd = -1;
                     Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[i]);
                     Server::Singleton() -= Server::Singleton()[i];
-                    i--;
+                    //i--;
                     counter--;
-                    break;
+                    continue;
                 }
                 //std::cout << buffer << std::endl;
                 std::string str = buffer;
@@ -155,7 +158,6 @@ void Server::serverLoop()
                     if (Server::Singleton()[i]->fd == -1)
                     {
                         Server::Singleton() -= Server::Singleton()[i];
-                        i--;
                         counter--;
                         break;
                     }
