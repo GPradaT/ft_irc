@@ -11,7 +11,7 @@ Server::~Server()
 }
 
 
-int Server::initialize(const std::string &psswd, const unsigned short &port)
+int Server::initialize(const std::string &psswd, const unsigned int &port)
 {
     this->_passwd = psswd;
     this->_port = port;

@@ -33,7 +33,7 @@ class	Server
 
 		void			serverLoop();
 		int				getServerSocket();
-		int				initialize(const std::string &psswd, const unsigned short &port);
+		int				initialize(const std::string &psswd, const unsigned int &port);
 
 		struct pollfd	*getClientFdByNickName(const std::string &name);
 		struct pollfd	*getClientFdByRealName(const std::string &name);

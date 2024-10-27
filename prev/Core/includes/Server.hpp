@@ -26,7 +26,7 @@ public:
     }
 
         Server& operator+=(std::string const& chan);
-        int initialize(const std::string &psswd, const unsigned short &port);
+        int initialize(const std::string &psswd, const unsigned int &port);
         void serverLoop();
         Channel* getChannelByName(const std::string &name);
         struct pollfd *getClientFdByNickName(const std::string &name);
