@@ -39,41 +39,48 @@ Server::~Server()
     delete this->_commands["USER"];
 }
 
-int Server::initialize(const std::string &psswd, const unsigned short &port)
+int Server::initialize(const std::string &psswd, const unsigned int &port)
 {
-    this->_commands["NICK"] = new AuthNickCmd();
-    this->_commands["USER"] = new AuthUserCmd();
-    this->_commands["PASS"] = new AuthPassCmd();
-    this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
-    this->_commands["JOIN"] = new ChnlJoinCmd();
-    //this->_commands["WHO"] = new ChnlWhoCmd();
-    this->_commands["QUIT"] = new QuitCommand();
-    this->_commands["MODE"] = new ChnlModeCmd();
-    this->_commands["KICK"] = new ChnlKickCmd();
-    this->_commands["INVITE"] = new ChnlInviteCmd();
-    this->_commands["TOPIC"] = new ChnlTopicCmd();
-    this->_commands["PART"] = new ChnlPartCmd();
+    try
+    {
+        this->_commands["NICK"] = new AuthNickCmd();
+        this->_commands["USER"] = new AuthUserCmd();
+        this->_commands["PASS"] = new AuthPassCmd();
+        this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
+        this->_commands["JOIN"] = new ChnlJoinCmd();
+        this->_commands["WHO"] = new ChnlWhoCmd();
+        this->_commands["QUIT"] = new QuitCommand();
+        this->_commands["MODE"] = new ChnlModeCmd();
+        this->_commands["KICK"] = new ChnlKickCmd();
+        this->_commands["INVITE"] = new ChnlInviteCmd();
+        this->_commands["TOPIC"] = new ChnlTopicCmd();
+        this->_commands["PART"] = new ChnlPartCmd();
 
-    //std::set<unsigned short> occupiedPorts = {80, 443, 21, 22, 25, 110, 143, 993, 995};
-    //if (occupiedPorts.find(port) != occupiedPorts.end())
-    //{
-    //    throw std::runtime_error("Port " + std::to_string(port) + " is commonly occupied. Please choose a different port.");
-    //}
-
-    std::cout << this->_fds.size();
-    this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    int a;
-    setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &a, sizeof(int));
-    this->_serverAddress.sin_family = AF_INET;
-    this->_serverAddress.sin_port = htons(port);
-    this->_serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
-    this->_passwd = psswd;
-    bind(this->_serverSocket, (struct sockaddr*)&this->_serverAddress, sizeof(this->_serverAddress));
-    listen(this->_serverSocket, 5);
-    struct pollfd server;
-    this->_fds.push_back(server);
-    this->_fds[0].fd = this->_serverSocket;
-    this->_fds[0].events = POLLIN;
+        std::cout << this->_fds.size();
+        this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+        if (this->_serverSocket < 0)
+            throw std::runtime_error("Error: Not able to create the socket.");
+        int a = 1;
+        if (setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &a, sizeof(int)) == -1)
+            throw std::runtime_error("Not able to set the socket correctly.");
+        this->_serverAddress.sin_family = AF_INET;
+        this->_serverAddress.sin_port = htons(port);
+        this->_serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
+        this->_passwd = psswd;
+        if (bind(this->_serverSocket, (struct sockaddr*)&this->_serverAddress, sizeof(this->_serverAddress)) == -1) 
+            throw std::runtime_error("Error: Not accessible port.");
+        if (listen(this->_serverSocket, 100) == -1)
+            throw std::runtime_error("Error: Not listening to connections.");
+        struct pollfd server;
+        this->_fds.push_back(server);
+        this->_fds[0].fd = this->_serverSocket;
+        this->_fds[0].events = POLLIN;
+    }
+    catch (const std::runtime_error &e)
+    {
+        std::cerr << e.what() << std::endl;
+        return -1;
+    }
     return 0;
 }
 
