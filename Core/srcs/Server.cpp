@@ -60,7 +60,7 @@ int Server::initialize(const std::string &psswd, const unsigned short &port)
     //    throw std::runtime_error("Port " + std::to_string(port) + " is commonly occupied. Please choose a different port.");
     //}
 
-    //std::cout << this->_fds.size();
+    std::cout << this->_fds.size();
     this->_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     int a;
     setsockopt(this->_serverSocket, SOL_SOCKET, SO_REUSEADDR, &a, sizeof(int));
@@ -80,7 +80,7 @@ int Server::initialize(const std::string &psswd, const unsigned short &port)
 void closeall(int signum)
 {
     // Handle signal to close all connections
-    //std::cout << "Closing all connections..." << std::endl;
+    std::cout << "Closing all connections..." << std::endl;
     close(Server::Singleton().getServerSocket());
     exit(signum);
 }
@@ -99,21 +99,21 @@ void Server::serverLoop()
             Server::Singleton().setCurrentFd(Server::Singleton()[i]);
             if (Server::Singleton()[i]->revents == 0)
             {
-                //std::cout << "bucle\n";
+                std::cout << "bucle\n";
                 continue;
             }
             if (i != 0)
             {
+                Server::Singleton()[i]->revents = 1;
                 char buf[1024];
                 int result = recv(Server::Singleton()[i]->fd, &buf, 1, MSG_PEEK);
                 if (result == 0)
                 {
                     Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[i]);
-                    //Server::Singleton()[i]->fd = -1;
                     Server::Singleton() -= Server::Singleton()[i];
                     i--;
                     counter--;
-                    continue;
+                    break;
                 }
             }
             if (Server::Singleton()[i]->fd == Server::Singleton().getServerSocket())
@@ -140,9 +140,9 @@ void Server::serverLoop()
                     Server::Singleton() -= Server::Singleton()[i];
                     i--;
                     counter--;
-                    continue;
+                    break;
                 }
-                ////std::cout << buffer << std::endl;
+                //std::cout << buffer << std::endl;
                 std::string str = buffer;
                 std::stringstream ss(str);
                 std::string line;
@@ -177,20 +177,18 @@ Server& Server::operator+=(std::string const& chanName)
 
 Server& Server::operator-=(Client *client)
 {
-    if (client->getFd()->fd)
-        close(client->getFd()->fd);
-    else
-        std::cout << "the client has left the fd open at closing" << std::endl;
+    //delete client
+    close(client->getFd()->fd);
     client->getFd()->fd = -1;
     for (int i = 0; i < this->_channels.size(); i++)
         this->_channels[i] -= client;
     std::deque<Client>::iterator it = std::find(this->_clients.begin(), this->_clients.end(), *client);
     if (it != this->_clients.end())
     {
-        //std::cout << "el viejo size de clients es " << this->_clients.size() << std::endl;
-        //std::cout << "cliente encontrado y borrado" << std::endl;
+        std::cout << "el viejo size de clients es " << this->_clients.size() << std::endl;
+        std::cout << "cliente encontrado y borrado" << std::endl;
         this->_clients.erase(std::remove(this->_clients.begin(), this->_clients.end(), *client), this->_clients.end());
-        //std::cout << "el nuevo size de clients es " << this->_clients.size() << std::endl;
+        std::cout << "el nuevo size de clients es " << this->_clients.size() << std::endl;
     }
     return *this;
 }
@@ -202,9 +200,9 @@ Server& Server::operator-=(struct pollfd *fd)
     {
         if ((*it).fd == -1)
         {
-            //std::cout << "el viejo size de fds es " << this->_fds.size() << std::endl;
+            std::cout << "el viejo size de fds es " << this->_fds.size() << std::endl;
             this->_fds.erase(it);
-            //std::cout << "el nuevo size de fds es " << this->_fds.size() << std::endl;
+            std::cout << "el nuevo size de fds es " << this->_fds.size() << std::endl;
             break;
         }
     }
@@ -329,21 +327,21 @@ void Server::createChannel(const std::string &name)
 	Channel newChannel;
 	if (newChannel.setName(name))
 	{
-		//std::cout << "paso pro aqui" << std::endl;
+		std::cout << "paso pro aqui" << std::endl;
 		struct pollfd *fd = Server::Singleton().getCurrentFd();
 		Client *client = Server::Singleton().getClientByFd(fd);
 		//newChannel.setChannelModes(client);
 		this->_channels.push_back(newChannel);
-		//std::cout << "DEBUG 1" << std::endl;
+		std::cout << "DEBUG 1" << std::endl;
 		this->_channels[this->_channels.size() - 1] += client;
-		//std::cout << "DEBUG 2" << std::endl;
+		std::cout << "DEBUG 2" << std::endl;
 		this->_channels[this->_channels.size() - 1].getModes()->chanCreator = client->getNickName();
-		//std::cout << "DEBUG 3" << std::endl;
+		std::cout << "DEBUG 3" << std::endl;
 		this->_channels[this->_channels.size() - 1].getModes()->topicLock = false;
-		//std::cout << "DEBUG 4" << std::endl;
+		std::cout << "DEBUG 4" << std::endl;
 		this->_channels[this->_channels.size() - 1].getOperators()->push_back(client);
-		//std::cout << "DEBUG 5" << std::endl;
-		//std::cout << this->_channels[this->_channels.size() - 1].getChannelName() << " created" << std::endl;
+		std::cout << "DEBUG 5" << std::endl;
+		std::cout << this->_channels[this->_channels.size() - 1].getChannelName() << " created" << std::endl;
 	}
 }
 
