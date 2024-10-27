@@ -177,8 +177,10 @@ Server& Server::operator+=(std::string const& chanName)
 
 Server& Server::operator-=(Client *client)
 {
-    //delete client
-    close(client->getFd()->fd);
+    if (client->getFd()->fd)
+        close(client->getFd()->fd);
+    else
+        std::cout << "the client has left the fd open at closing" << std::endl;
     client->getFd()->fd = -1;
     for (int i = 0; i < this->_channels.size(); i++)
         this->_channels[i] -= client;
