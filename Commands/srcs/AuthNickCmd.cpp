@@ -31,24 +31,24 @@ bool AuthNickCmd::validate(IRCMessage const&message)
 	str.erase(std::remove(str.begin (), str.end (), '\n'), str.end());
 	if (!client->correctPwd() && (!Server::Singleton().getPasswd().empty() || Server::Singleton().getPasswd() != ""))
 	{
-		Server::Singleton().sendMsg(client, "ERR_PASSWDMISMATCH :Wrong Password\r\n");
+		Server::Singleton().sendMsg(client, ":Server 464 :Password incorrect\r\n");
 		Server::Singleton() -= client;
 		return false;
 	}
 	if (str.empty())
 	{
-		Server::Singleton().sendMsg(client, "ERR_NONICKNAMEGIVEN :No nickname given\r\n");
+		Server::Singleton().sendMsg(client, ":Server 431 :No nickname given\r\n");
 		return false;
 	}
 	if (false) //TO DO, implementar check de caracteres correctos
 	{
-		Server::Singleton().sendMsg(client, "ERR_ERRONEUSNICKNAME " + str + " :Erroneous nickname\r\n");
+		Server::Singleton().sendMsg(client, ":Server 432 " + str + " :Erroneous nickname\r\n");
 		return false;
 	}
 	if (Server::Singleton().getClientByNickName(str) != 0
 		&& Server::Singleton().getClientByNickName(str) != client)
 	{
-		Server::Singleton().sendMsg(client, "ERR_NICKNAMEINUSE " + str + " :Nickname is already in use\r\n");
+		Server::Singleton().sendMsg(client, ":Server 433 " + str + " :Nickname is already in use\r\n");
 		return false;
 	}
 

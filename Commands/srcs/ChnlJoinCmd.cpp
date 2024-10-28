@@ -41,12 +41,12 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 	// //std::cout << "el nombre del canal es -> [" << str <<  "] y el size de la string es -> " << str.length() << std::endl;
 	if (!_client->isVerified() /*|| (_client->isVerified() && (_client->getNickName().empty() || _client->getRealName().empty()))*/)
 	{
-		Server::Singleton().sendMsg(_client, ":" + _client->getNickName() + " ERR_NOTREGISTERED :You have not registered\r\n");
+		Server::Singleton().sendMsg(_client, ":" + _client->getNickName() + " 451 :You have not registered\r\n");
 		return false;
 	}
 	if (msg.getParams().size() < 1 || str.length() <= 1)
 	{
-		Server::Singleton().sendMsg(_client, ":" + _client->getNickName() + " ERR_NEEDMOREPARAMS JOIN :Not enough parameters\r\n");
+		Server::Singleton().sendMsg(_client, ":" + _client->getNickName() + " 461 JOIN :Not enough parameters\r\n");
 		return false;
 	}
 	if (Server::Singleton().getChannelByName(str) == 0)
@@ -61,7 +61,7 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 			key = msg.getParams()[1];
 		if (chan->getKey() != key)
 		{
-			Server::Singleton().sendMsg(_client, "ERR_BADCHANNELKEY " + _client->getNickName() + " " + str + ":Cannot join channel (+k)\r\n");
+			Server::Singleton().sendMsg(_client, " 475 " + _client->getNickName() + " " + str + ":Cannot join channel (+k)\r\n");
 			return false;
 		}
 	}
@@ -78,6 +78,13 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 	}
 	else
 	{
+		/* Esta numeric reply nose si deberia usarse.
+        471     ERR_CHANNELISFULL
+                        "<channel> :Cannot join channel (+l)"
+		Y a esta me espero a la lista de invitados.
+        473     ERR_INVITEONLYCHAN
+                        "<channel> :Cannot join channel (+i)"
+		*/
 		Server::Singleton().sendMsg(_client, "ERR_RESTRICTED :Your connection is restricted!\r\n");
 		return false;
 	}

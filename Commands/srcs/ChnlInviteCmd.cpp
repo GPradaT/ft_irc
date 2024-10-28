@@ -18,7 +18,7 @@ void	ChnlInviteCmd::execute(Client *client, IRCMessage const &message)
 	{
 		if (Server::Singleton().getChannelByName(channelName)->isOperator(client) == false)
 		{
-			msg = ":" + client->getNickName() + "ERR_CHANOPRIVSNEEDED :You're not channel operator\r\n";
+			msg =  ": " + client->getNickName() + " 482 " + channelName + " :You're not channel operator\r\n";
 			Server::Singleton().sendMsg(client, msg);
 			return;
 		}
