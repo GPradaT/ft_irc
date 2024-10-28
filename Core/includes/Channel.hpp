@@ -21,6 +21,7 @@ class	Channel
 		std::string			_key;
 		int					_limit;
 		s_mode				_modes;
+		std::deque<std::string> _inviteList;
 
 	public:
 		Channel				&operator+=(Client *cli);
@@ -61,6 +62,9 @@ class	Channel
 		void				addOperator(Client *client);
 		void				removeOperator(Client *client);
 		bool				isOperator(Client *client) const;
+
+		void				addInvite(std::string &nickname);
+		bool				isInvited(std::string &nickname) const;
 
 	Channel();
 	~Channel();

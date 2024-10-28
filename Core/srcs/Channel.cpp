@@ -204,3 +204,18 @@ void	Channel::removeOperator(Client *client)
 		}
 	}
 }
+
+void	Channel::addInvite(std::string &nickname)
+{
+	this->_inviteList.push_back(nickname);
+}
+
+bool	Channel::isInvited(std::string &nickname) const
+{
+	for (int i = 0; i < this->_inviteList.size(); i++)
+	{
+		if (this->_inviteList[i] == nickname)
+			return true;
+	}
+	return false;
+}

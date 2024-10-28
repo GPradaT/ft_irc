@@ -23,6 +23,7 @@ void	ChnlInviteCmd::execute(Client *client, IRCMessage const &message)
 			return;
 		}
 	}
+	Server::Singleton().getChannelByName(channelName)->addInvite(nickToInvite);
 	msg = ":" + client->getNickName() + " INVITE " + nickToInvite + " " + channelName + "\r\n";
 	Server::Singleton().getChannelByName(channelName)->sendToAll(msg);
 }
