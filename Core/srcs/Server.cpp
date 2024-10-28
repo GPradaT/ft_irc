@@ -154,19 +154,25 @@ void Server::serverLoop()
                 }
                 //std::cout << buffer << std::endl;
                 std::string str = buffer;
-                std::stringstream ss(str);
-                std::string line;
-                while (std::getline(ss, line, '\n'))
+                Client *client = getClientByFd(Server::Singleton()[i]);
+                client->addBuffer(str);
+                std::string buf = client->getBuffer();
+                std::cout << buf << "\n";
+                if (buf.find('\r') != std::string::npos)
                 {
-                    IRCMessage message(line);
-					//message.clean();
-                    // if (message.getIsValid())
-                    Server::Singleton() *= message;
-                    if (Server::Singleton()[i]->fd == -1)
+                    client->clearBuffer();
+                    std::stringstream ss(buf);
+                    std::string line;
+                    while (std::getline(ss, line, '\n'))
                     {
-                        Server::Singleton() -= Server::Singleton()[i];
-                        counter--;
-                        break;
+                        IRCMessage message(line);
+                        Server::Singleton() *= message;
+                        if (Server::Singleton()[i]->fd == -1)
+                        {
+                            Server::Singleton() -= Server::Singleton()[i];
+                            counter--;
+                            break;
+                        }
                     }
                 }
                 memset(buffer, 0, 1024);

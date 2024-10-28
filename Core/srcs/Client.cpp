@@ -75,3 +75,18 @@ void    Client::setAdmin(bool op)
 {
     this->_isOperator = op;
 }
+
+void	Client::addBuffer(const std::string &append)
+{
+	this->_buffer += append;
+}
+
+void	Client::clearBuffer()
+{
+	this->_buffer = "";
+}
+
+std::string		Client::getBuffer()
+{
+	return this->_buffer;
+}

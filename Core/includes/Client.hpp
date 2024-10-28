@@ -20,6 +20,7 @@ class	Client
 		bool			_isOperator;
 		bool			_isVerified;
 		bool			_correctPwd;
+		std::string		_buffer;
 	public:
 		bool			operator==(const Client &n2);
 
@@ -37,6 +38,9 @@ class	Client
 		void			setReal(const std::string &name);
 		void			setAdmin(bool admin);
 
+		void			addBuffer(const std::string &append);
+		std::string		getBuffer();
+		void			clearBuffer();
 	Client();
 	~Client();
 };
