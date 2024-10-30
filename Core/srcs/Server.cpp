@@ -12,7 +12,6 @@
 #include "../../Commands/includes/ChnlJoinCmd.hpp"
 #include "../../Commands/includes/ChnlPartCmd.hpp"
 #include "../../Commands/includes/ClientQuitCmd.hpp"
-#include "../../Commands/includes/ChnlWhoCmd.hpp"
 #include "../../Commands/includes/ChnlModeCmd.hpp"
 #include "../../Commands/includes/ChnlKickCmd.hpp"
 #include "../../Commands/includes/ChnlInviteCmd.hpp"
@@ -28,7 +27,6 @@ Server::~Server()
     delete this->_commands["PASS"];
     delete this->_commands["PRIVMSG"];
     delete this->_commands["JOIN"];
-    //delete this->_commands["WHO"];
     delete this->_commands["QUIT"];
     delete this->_commands["NOTICE"];
     delete this->_commands["MODE"];
@@ -48,7 +46,6 @@ int Server::initialize(const std::string &psswd, const unsigned int &port)
         this->_commands["PASS"] = new AuthPassCmd();
         this->_commands["PRIVMSG"] = new MsgPrivmsgCmd();
         this->_commands["JOIN"] = new ChnlJoinCmd();
-        this->_commands["WHO"] = new ChnlWhoCmd();
         this->_commands["QUIT"] = new QuitCommand();
         this->_commands["MODE"] = new ChnlModeCmd();
         this->_commands["KICK"] = new ChnlKickCmd();
@@ -195,7 +192,7 @@ Server& Server::operator-=(Client *client)
     //delete client
     close(client->getFd()->fd);
     client->getFd()->fd = -1;
-    for (int i = 0; i < this->_channels.size(); i++)
+    for (unsigned long i = 0; i < this->_channels.size(); i++)
         this->_channels[i] -= client;
     std::deque<Client>::iterator it = std::find(this->_clients.begin(), this->_clients.end(), *client);
     if (it != this->_clients.end())
@@ -210,6 +207,7 @@ Server& Server::operator-=(Client *client)
 
 Server& Server::operator-=(struct pollfd *fd)
 {
+    fd->fd = -1;
     std::deque<struct pollfd>::iterator it;
     for (it = this->_fds.begin(); it < this->_fds.end(); it++)
     {
@@ -231,7 +229,7 @@ Server&			Server::operator*=(IRCMessage const& msg)
     return *this;
 }
 
-struct pollfd *Server::operator[](int idx)
+struct pollfd *Server::operator[](unsigned long idx)
 {
     return &this->_fds[idx];
 }
@@ -253,7 +251,7 @@ void			Server::setCurrentFd(struct pollfd *current)
 
 Channel    *Server::getChannelByName(const std::string &name)
 {
-    for (int i = 0; i < this->_channels.size(); i++)
+    for (unsigned long i = 0; i < this->_channels.size(); i++)
     {
         if (this->_channels[i].getChannelName() == name)
             return &this->_channels[i];
@@ -263,7 +261,7 @@ Channel    *Server::getChannelByName(const std::string &name)
 
 struct pollfd    *Server::getClientFdByNickName(const std::string &name)
 {
-    for (int i = 0; i < this->_clients.size(); i++)
+    for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
         if (this->_clients[i].getNickName() == name)
             return this->_clients[i].getFd();
@@ -273,7 +271,7 @@ struct pollfd    *Server::getClientFdByNickName(const std::string &name)
 
 struct pollfd    *Server::getClientFdByRealName(const std::string &name)
 {
-    for (int i = 0; i < this->_clients.size(); i++)
+    for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
         if (this->_clients[i].getRealName() == name)
             return this->_clients[i].getFd();
@@ -283,7 +281,7 @@ struct pollfd    *Server::getClientFdByRealName(const std::string &name)
 
 Client*    Server::getClientByNickName(const std::string &name)
 {
-    for (int i = 0; i < this->_clients.size(); i++)
+    for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
         if (this->_clients[i].getNickName() == name)
             return &this->_clients[i];
@@ -293,7 +291,7 @@ Client*    Server::getClientByNickName(const std::string &name)
 
 Client*    Server::getClientByRealName(const std::string &name)
 {
-    for (int i = 0; i < this->_clients.size(); i++)
+    for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
         if (this->_clients[i].getRealName() == name)
             return &this->_clients[i];
@@ -303,7 +301,7 @@ Client*    Server::getClientByRealName(const std::string &name)
 
 Client			*Server::getClientByFd(struct pollfd *fd)
 {
-    for (int i = 0; i < this->_clients.size(); i++)
+    for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
         if (this->_clients[i].getFd() == fd)
             return &this->_clients[i];
@@ -330,7 +328,7 @@ int Server::sendMsg(Client* client, const std::string &msg)
 
 int Server::sendMsgAll(const std::string &msg)
 {
-    for (int i = 0; i < this->_clients.size(); i++)
+    for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
         send(this->_clients[i].getFd()->fd, msg.c_str(), msg.length(), 0);
     }
@@ -387,9 +385,9 @@ int Server::addClientToChannel(Client *client, Channel *channel)
 
 Channel *Server::getChannelByClient(Client *client)
 {
-    for (int i = 0; i < this->_channels.size(); i++)
+    for (unsigned long i = 0; i < this->_channels.size(); i++)
     {
-        for (int j = 0; j < (*this->_channels[i].getClientsFromChannel()).size(); j++)
+        for (unsigned long j = 0; j < (*this->_channels[i].getClientsFromChannel()).size(); j++)
         {
             if ((*this->_channels[i].getClientsFromChannel())[j] == client)
                 return &this->_channels[i];
@@ -404,7 +402,7 @@ int Server::removeClientFromChannel(Client *client, Channel *channel)
     {
         std::deque<Client*> *clients = channel->getClientsFromChannel();
         std::deque<Client*>::iterator it = std::find((*clients).begin(), (*clients).end(), client);
-        for (int i = 0; i < (*clients).size(); i++)
+        for (unsigned long i = 0; i < (*clients).size(); i++)
         {
             if ((*clients)[i] == client)
             {
@@ -418,7 +416,7 @@ int Server::removeClientFromChannel(Client *client, Channel *channel)
         {
             std::deque<Client*> *admins = channel->getOperators();
             std::deque<Client*>::iterator it2 = std::find((*admins).begin(), (*admins).end(), client);
-            for (int i = 0; i < (*admins).size(); i++)
+            for (unsigned long i = 0; i < (*admins).size(); i++)
             {
                 if ((*admins)[i] == client)
                 {

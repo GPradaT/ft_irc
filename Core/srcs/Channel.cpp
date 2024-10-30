@@ -42,7 +42,7 @@ std::deque<Client*> *Channel::getOperators()
 
 bool	Channel::isOperator(Client *client) const
 {
-	for (int i = 0; i < _operators.size(); ++i)
+	for (unsigned long i = 0; i < _operators.size(); ++i)
 	{
 		//std::cout << "operator: " << _operators[i]->getNickName() << std::endl;
 		if (_operators[i] == client)
@@ -53,7 +53,7 @@ bool	Channel::isOperator(Client *client) const
 
 Client *Channel::getClientByNickName(std::string name)
 {
-    for (int i = 0; i < this->_clients.size(); i++)
+    for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
         if (this->_clients[i]->getNickName() == name)
             return this->_clients[i];
@@ -63,7 +63,7 @@ Client *Channel::getClientByNickName(std::string name)
 
 Client *Channel::getClientByRealName(std::string name)
 {
-    for (int i = 0; i < this->_clients.size(); i++)
+    for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
         if (this->_clients[i]->getRealName() == name)
             return this->_clients[i];
@@ -73,7 +73,7 @@ Client *Channel::getClientByRealName(std::string name)
 
 struct pollfd *Channel::getClientFd(Client* client)
 {
-    for (int i = 0; i < this->_clients.size(); i++)
+    for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
         if (this->_clients[i] == client)
             this->_clients[i]->getFd();
@@ -88,7 +88,7 @@ std::string Channel::getChannelName()
 
 void    Channel::sendToAll(const std::string &msg)
 {
-    for (int i = 0; i < this->_clients.size(); i++)
+    for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
         Server::Singleton().sendMsg(this->_clients[i], msg);
     }
@@ -115,7 +115,7 @@ char	Channel::getChannelPrefix() const
 
 void    Channel::sendMsgExcept(Client *c, const std::string &msg)
 {
-    for (int i = 0; i < this->_clients.size(); i++)
+    for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
         Client *cli = this->_clients[i];
         if (c != cli)
@@ -195,7 +195,7 @@ void	Channel::addOperator(Client *client)
 
 void	Channel::removeOperator(Client *client)
 {
-	for (int i = 0; i < this->_operators.size(); i++)
+	for (unsigned long i = 0; i < this->_operators.size(); i++)
 	{
 		if (this->_operators[i] == client)
 		{
@@ -212,7 +212,7 @@ void	Channel::addInvite(std::string &nickname)
 
 bool	Channel::isInvited(std::string &nickname) const
 {
-	for (int i = 0; i < this->_inviteList.size(); i++)
+	for (unsigned long i = 0; i < this->_inviteList.size(); i++)
 	{
 		if (this->_inviteList[i] == nickname)
 			return true;

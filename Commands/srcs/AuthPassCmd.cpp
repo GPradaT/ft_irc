@@ -11,6 +11,7 @@ AuthPassCmd::~AuthPassCmd()
 
 void AuthPassCmd::execute(Client *client, IRCMessage const&message)
 {
+	message.print();
 	client->setPwd();
 }
 

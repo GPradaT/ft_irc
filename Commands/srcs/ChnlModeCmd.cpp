@@ -19,7 +19,7 @@ void	ChnlModeCmd::execute(Client *client, IRCMessage const &message)
 
 	std::string modesToApply = "";
 	std::vector<std::string> paramsToApply;
-	if (!parseModes(modes, message.getParams(), paramIndex, client, channel, modesToApply, paramsToApply))
+	if (!parseModes(modes, message.getParams(), paramIndex, client, modesToApply, paramsToApply))
 		return ;
 	applyModes(channel, modesToApply, paramsToApply, client);
 	std::string modeMessage = ":" + client->getNickName() + " MODE " + message.getParams()[0] + " " + modesToApply;
@@ -76,7 +76,7 @@ bool	ChnlModeCmd::validate(IRCMessage const&msg)
 	return true;
 }
 
-bool	ChnlModeCmd::parseModes(const std::string &modes, const std::vector<std::string> &params, size_t &paramIndex, Client *client, Channel *channel, std::string &modesToApply, std::vector<std::string> &paramsToApply)
+bool	ChnlModeCmd::parseModes(const std::string &modes, const std::vector<std::string> &params, size_t &paramIndex, Client *client, std::string &modesToApply, std::vector<std::string> &paramsToApply)
 {
 	//std::cout << "IN PARSEMODES" << std::endl;
 	bool	success = true;

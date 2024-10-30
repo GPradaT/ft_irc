@@ -14,8 +14,8 @@ class	Server
 		std::deque<Client>			_clients;
 		int							_serverSocket;
 		std::string					_passwd;
-		unsigned short				_port;
-		bool						_endServer;
+		//unsigned short				_port;
+		//bool						_endServer;
 		sockaddr_in						_serverAddress;
 		struct pollfd   			*_currentFd;
 		std::map<std::string, ICommand*> _commands;
@@ -29,7 +29,7 @@ class	Server
 		Server&			operator-=(Client *client);
 		Server&			operator-=(struct pollfd *fd);
 		Server&			operator*=(IRCMessage const& msg);
-		struct pollfd  *operator[](int idx);
+		struct pollfd  *operator[](unsigned long idx);
 
 		void			serverLoop();
 		int				getServerSocket();

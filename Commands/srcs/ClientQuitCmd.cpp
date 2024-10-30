@@ -11,6 +11,7 @@ QuitCommand::~QuitCommand()
 
 void QuitCommand::execute(Client *client, IRCMessage const &message)
 {
+    message.print();
     Server::Singleton() -= client;
 }
 

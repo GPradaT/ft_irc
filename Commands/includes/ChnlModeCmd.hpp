@@ -18,7 +18,7 @@ class ChnlModeCmd : public ICommand
 
 	private:
 		bool	parseModes(const std::string &modes, const std::vector<std::string> &params,\
-							size_t &paramIndex, Client *Client, Channel *channel,\
+							size_t &paramIndex, Client *Client,\
 							std::string &modesToApply, std::vector<std::string> &paramsToApply);
 		void	applyModes(Channel *channel, const std::string &modesToApply, const std::vector<std::string> &paramsToApply, Client *client);
 		//char	applyMode(char mode, bool adding, s&param, Client *client, Channel *channel);

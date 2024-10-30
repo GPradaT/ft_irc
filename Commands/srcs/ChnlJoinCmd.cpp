@@ -20,7 +20,7 @@ void	ChnlJoinCmd::execute(Client *client, IRCMessage const&message)
 	Server::Singleton().sendMsg(_client, ":"+ _client->getNickName() + " JOIN " + str + "\r\n");
 	Channel *chan = Server::Singleton().getChannelByName(str);
 	if (chan){
-		for (int i = 0; i < chan->getClientsFromChannel()->size(); i++)
+		for (unsigned long i = 0; i < chan->getClientsFromChannel()->size(); i++)
 		{
 			Client *to = (*chan->getClientsFromChannel())[i];
 			chan->sendToAll(":Server 353 " + client->getNickName() + " = " + chan->getChannelName() + " :@" + to->getNickName() + "\r\n");
