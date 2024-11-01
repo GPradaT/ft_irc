@@ -12,7 +12,7 @@ QuitCommand::~QuitCommand()
 void QuitCommand::execute(Client *client, IRCMessage const &message)
 {
     message.print();
-    Server::Singleton() -= client;
+    client->getFd()->fd = -1;
 }
 
 bool QuitCommand::validate(IRCMessage const &message)

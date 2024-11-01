@@ -5,7 +5,7 @@ Core/srcs/IRCMessage.cpp Commands/srcs/AuthNickCmd.cpp Commands/srcs/AuthPassCmd
 Commands/srcs/MsgPrivmsgCmd.cpp Commands/srcs/MessageCommand.cpp Commands/srcs/ChnlJoinCmd.cpp \
 Commands/srcs/ChnlModeCmd.cpp Commands/srcs/ChnlKickCmd.cpp \
 Commands/srcs/ChnlInviteCmd.cpp Commands/srcs/ChnlTopicCmd.cpp Commands/srcs/ClientQuitCmd.cpp \
-Commands/srcs/ChnlPartCmd.cpp Commands/srcs/AuthUserCmd.cpp
+Commands/srcs/ChnlPartCmd.cpp Commands/srcs/AuthUserCmd.cpp Core/srcs/Get.cpp
 
 
 OBJ = $(SRC:.cpp=.o)

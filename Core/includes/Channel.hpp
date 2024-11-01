@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Client.hpp"
+#include "../srcs/Get.cpp"
+#include <list>
 
 typedef struct mode
 {
@@ -13,8 +15,8 @@ typedef struct mode
 class	Channel
 {
 	private:
-		std::deque<Client*>	_clients;
-		std::deque<Client*>	_operators;
+		std::list<Client*>	_clients;
+		std::list<Client*>	_operators;
 		std::string			_name;
 		char				_channelPrefix;
 		// CHANNEL MODES
@@ -27,13 +29,13 @@ class	Channel
 		Channel				&operator+=(Client *cli);
 		Channel				&operator-=(Client *cli);
 
-		std::deque<Client*>	*getClientsFromChannel();
+		std::list<Client*>	*getClientsFromChannel();
 		Client*				getClientByNickName(std::string name);
 		Client*				getClientByRealName(std::string name);
 		struct pollfd		*getClientFd(Client* client);
 
 		std::string			getChannelName();
-		std::deque<Client*>	*getOperators();
+		std::list<Client*>	*getOperators();
 		std::string			&getChanCreator() const;
 
 		char				getChannelPrefix() const;
@@ -61,10 +63,10 @@ class	Channel
 
 		void				addOperator(Client *client);
 		void				removeOperator(Client *client);
-		bool				isOperator(Client *client) const;
+		bool				isOperator(Client *client);
 
 		void				addInvite(std::string &nickname);
-		bool				isInvited(std::string &nickname) const;
+		bool				isInvited(const std::string &nickname) const;
 
 	Channel();
 	~Channel();

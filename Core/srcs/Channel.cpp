@@ -1,5 +1,5 @@
-#include "../includes/Channel.hpp"
 #include "../includes/Server.hpp"
+#include "../includes/Channel.hpp"
 
 Channel::Channel()
 {
@@ -30,22 +30,22 @@ Channel &Channel::operator-=(Client *cli)
     return *this;
 }
 
-std::deque<Client*> *Channel::getClientsFromChannel()
+std::list<Client*> *Channel::getClientsFromChannel()
 {
     return &this->_clients;
 }
 
-std::deque<Client*> *Channel::getOperators()
+std::list<Client*> *Channel::getOperators()
 {
     return &this->_operators;
 }
 
-bool	Channel::isOperator(Client *client) const
+bool	Channel::isOperator(Client *client)
 {
 	for (unsigned long i = 0; i < _operators.size(); ++i)
 	{
 		//std::cout << "operator: " << _operators[i]->getNickName() << std::endl;
-		if (_operators[i] == client)
+		if (*get(this->_operators, i) == client)
 			return true;
 	}
 	return false;
@@ -55,8 +55,8 @@ Client *Channel::getClientByNickName(std::string name)
 {
     for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        if (this->_clients[i]->getNickName() == name)
-            return this->_clients[i];
+        if ((*get(this->_clients, i))->getNickName() == name)
+            return *get(this->_clients,i);
     }
     return 0;
 }
@@ -65,8 +65,8 @@ Client *Channel::getClientByRealName(std::string name)
 {
     for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        if (this->_clients[i]->getRealName() == name)
-            return this->_clients[i];
+        if ((*get(this->_clients, i))->getRealName() == name)
+            return *get(this->_clients, i);
     }
     return 0;
 }
@@ -75,8 +75,8 @@ struct pollfd *Channel::getClientFd(Client* client)
 {
     for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        if (this->_clients[i] == client)
-            this->_clients[i]->getFd();
+        if (*get(this->_clients, i) == client)
+            (*get(this->_clients, i))->getFd();
     }
     return 0;
 }
@@ -90,7 +90,7 @@ void    Channel::sendToAll(const std::string &msg)
 {
     for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        Server::Singleton().sendMsg(this->_clients[i], msg);
+        Server::Singleton().sendMsg(*get(this->_clients, i), msg);
     }
 }
 
@@ -117,7 +117,7 @@ void    Channel::sendMsgExcept(Client *c, const std::string &msg)
 {
     for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        Client *cli = this->_clients[i];
+        Client *cli = *get(this->_clients, i);
         if (c != cli)
         {
             //std::cout << "name to send is " << this->_clients.size() << std::endl;
@@ -188,20 +188,22 @@ const std::string	&Channel::gettopicLock() const
 
 void	Channel::addOperator(Client *client)
 {
-	//std::deque<Client*>::iterator it = std::find(_operators.begin(), _operators.end(), client);
+	//std::list<Client*>::iterator it = std::find(_operators.begin(), _operators.end(), client);
 	//if (it == _operators.end())
 	this->_operators.push_back(client);
 }
 
 void	Channel::removeOperator(Client *client)
 {
+	std::list<Client*>::iterator it = this->_operators.begin();
 	for (unsigned long i = 0; i < this->_operators.size(); i++)
 	{
-		if (this->_operators[i] == client)
+		if (*get(this->_operators, i) == client)
 		{
-			this->_operators.erase(this->_operators.begin() + i);
+			this->_operators.erase(it);
 			return;
 		}
+		it++;
 	}
 }
 
@@ -210,7 +212,7 @@ void	Channel::addInvite(std::string &nickname)
 	this->_inviteList.push_back(nickname);
 }
 
-bool	Channel::isInvited(std::string &nickname) const
+bool	Channel::isInvited(const std::string &nickname) const
 {
 	for (unsigned long i = 0; i < this->_inviteList.size(); i++)
 	{

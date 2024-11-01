@@ -22,7 +22,7 @@ void	ChnlJoinCmd::execute(Client *client, IRCMessage const&message)
 	if (chan){
 		for (unsigned long i = 0; i < chan->getClientsFromChannel()->size(); i++)
 		{
-			Client *to = (*chan->getClientsFromChannel())[i];
+			Client *to = *get((*chan->getClientsFromChannel()), i);
 			chan->sendToAll(":Server 353 " + client->getNickName() + " = " + chan->getChannelName() + " :@" + to->getNickName() + "\r\n");
 		}
 		chan->sendToAll(":Server 366 " + client->getNickName() + " " + chan->getChannelName() + " :End of /NAMES list\r\n");
@@ -65,19 +65,29 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 			return false;
 		}
 	}
-	if (Server::Singleton().getChannelByName(str)->getModes()->inviteOnly == false) //check channel permissions;
+	Channel *chan = Server::Singleton().getChannelByName(str);
+	if (chan->getModes()->inviteOnly == false) //check channel permissions;
 	{
 		//en caso de que se mueva el cliente, lo quitamos del channel en el que este y luego lo anadimos al nuevo
 		/*Channel *current = Server::Singleton().getChannelByClient(_client);
 		if (current != 0)
 			*current -= _client;*/
-		Channel *chan = Server::Singleton().getChannelByName(str);
 		if (chan->getClientByNickName(_client->getNickName()) == 0)
 			*chan += _client;
 		// //std::cout << "hay esta cantidad de cleintes en el chan ---> " << chan->getClientsFromChannel()->size() << std::endl;
 	}
 	else
 	{
+		if (!chan->isInvited(_client->getNickName()))
+		{
+			Server::Singleton().sendMsg(_client, "ERR_INVITEONLYCHAN :You are not invited!\r\n");
+			return false;
+		}
+		else
+		{
+			if (chan->getClientByNickName(_client->getNickName()) == 0)
+				*chan += _client;
+		}
 		/* Esta numeric reply nose si deberia usarse.
         471     ERR_CHANNELISFULL
                         "<channel> :Cannot join channel (+l)"
@@ -85,8 +95,7 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
         473     ERR_INVITEONLYCHAN
                         "<channel> :Cannot join channel (+i)"
 		*/
-		Server::Singleton().sendMsg(_client, "ERR_RESTRICTED :Your connection is restricted!\r\n");
-		return false;
+		
 	}
 	execute(_client, msg);
 	return true;

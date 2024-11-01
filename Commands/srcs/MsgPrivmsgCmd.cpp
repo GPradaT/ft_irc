@@ -8,7 +8,7 @@ bool MsgPrivmsgCmd::validate(IRCMessage const &message)
 {
     Client *client = Server::Singleton().getClientByFd(Server::Singleton().getCurrentFd());
     std::string chars = message.getTrailing();
-    if (message.getParams().empty())
+    if (message.getParams().size() == 0)
     {
         Server::Singleton().sendMsg(client, "411 ERR_NORECIPIENT :No recipient given (PRIVMSG)\r\n");
         return false;

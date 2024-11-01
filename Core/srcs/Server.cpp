@@ -3,6 +3,9 @@
 #include <set>
 #include <stdexcept>
 #include <sys/stat.h>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "../includes/IRCMessage.hpp"
 #include "../../Commands/includes/AuthNickCmd.hpp"
@@ -19,6 +22,7 @@
 
 Server::Server()
 {
+    this->_delBuffer = "";
 }
 
 Server::~Server()
@@ -70,8 +74,8 @@ int Server::initialize(const std::string &psswd, const unsigned int &port)
             throw std::runtime_error("Error: Not listening to connections.");
         struct pollfd server;
         this->_fds.push_back(server);
-        this->_fds[0].fd = this->_serverSocket;
-        this->_fds[0].events = POLLIN;
+        get(this->_fds, 0)->fd = this->_serverSocket;
+        get(this->_fds, 0)->events = POLLIN;
     }
     catch (const std::runtime_error &e)
     {
@@ -95,13 +99,14 @@ void Server::serverLoop()
     int polVal, tmp_fd, counter;
     while (1)
     {
-        polVal = poll(Server::Singleton()[0], Server::Singleton().getFdSize(), -1);
+        std::vector<struct pollfd> list = createVectorFromList(this->_fds);
+        polVal = poll(list.data(), list.size(), -1);
         Server::Singleton()[0]->events = POLLIN;
         counter = Server::Singleton().getFdSize();
         for (int i = 0; i < Server::Singleton().getFdSize(); i++)
         {
             Server::Singleton().setCurrentFd(Server::Singleton()[i]);
-            if (Server::Singleton()[i]->revents == 0)
+            if (list[i].revents == 0)
             {
                 std::cout << "bucle\n";
                 continue;
@@ -113,13 +118,11 @@ void Server::serverLoop()
                 int result = recv(Server::Singleton()[i]->fd, &buf, 1, MSG_PEEK);
                 if (result == 0)
                 {
-                    //std::cout << "count es " << counter << " and acutal size is " << Server::Singleton().getFdSize() << std::endl;
-                    if (Server::Singleton().getClientByFd(Server::Singleton()[i]))
-                        Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[i]);
-                    Server::Singleton()[i]->fd = -1;
-                    Server::Singleton() -= Server::Singleton()[i];
+                    std::ostringstream index;
+                    index << i;
+                    this->_delBuffer += index.str() + " ";
                     //i--;
-                    counter--;
+                    //counter--;
                     continue;
                 }
             }
@@ -140,7 +143,7 @@ void Server::serverLoop()
                 char buffer[1024] = {0};
                 int recVal = 0;
                 recVal = recv(Server::Singleton()[i]->fd, buffer, sizeof(buffer), 0);
-                if (recVal < 0)
+                /*if (recVal < 0)
                 {
                     //Server::Singleton()[i]->fd = -1;
                     Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[i]);
@@ -148,7 +151,7 @@ void Server::serverLoop()
                     //i--;
                     counter--;
                     continue;
-                }
+                }*/
                 //std::cout << buffer << std::endl;
                 std::string str = buffer;
                 Client *client = getClientByFd(Server::Singleton()[i]);
@@ -166,8 +169,11 @@ void Server::serverLoop()
                         Server::Singleton() *= message;
                         if (Server::Singleton()[i]->fd == -1)
                         {
-                            Server::Singleton() -= Server::Singleton()[i];
-                            counter--;
+                            std::ostringstream index;
+                            index << i;
+                            this->_delBuffer += index.str() + " ";
+                            //Server::Singleton() -= Server::Singleton()[i];
+                            //counter--;
                             break;
                         }
                     }
@@ -175,6 +181,25 @@ void Server::serverLoop()
                 memset(buffer, 0, 1024);
             }
         }
+        //borrado del bufer
+        std::stringstream ss;
+        ss.str (this->_delBuffer);
+        std::string t;
+        while (ss >> t) 
+        {
+            int iter = atoi(t.c_str());
+            std::cout << "fd deleted index is --> " << iter << std::endl;
+            if (Server::Singleton().getClientByFd(Server::Singleton()[iter]))
+            {
+                std::cout << "entra aqui\n";
+                std::cout << "cliente borrado tenia nickname --> " << Server::Singleton().getClientByFd(Server::Singleton()[iter])->getNickName();
+                Server::Singleton() -= Server::Singleton().getClientByFd(Server::Singleton()[iter]);
+            }
+            Server::Singleton()[iter]->fd = -1;
+            Server::Singleton() -= Server::Singleton()[iter];
+        }
+        this->_delBuffer = "";
+        //
     }
     // closing the socket.
     close(Server::Singleton().getServerSocket());
@@ -193,8 +218,8 @@ Server& Server::operator-=(Client *client)
     close(client->getFd()->fd);
     client->getFd()->fd = -1;
     for (unsigned long i = 0; i < this->_channels.size(); i++)
-        this->_channels[i] -= client;
-    std::deque<Client>::iterator it = std::find(this->_clients.begin(), this->_clients.end(), *client);
+        *get(this->_channels, i) -= client;
+    std::list<Client>::iterator it = std::find(this->_clients.begin(), this->_clients.end(), *client);
     if (it != this->_clients.end())
     {
         std::cout << "el viejo size de clients es " << this->_clients.size() << std::endl;
@@ -208,8 +233,8 @@ Server& Server::operator-=(Client *client)
 Server& Server::operator-=(struct pollfd *fd)
 {
     fd->fd = -1;
-    std::deque<struct pollfd>::iterator it;
-    for (it = this->_fds.begin(); it < this->_fds.end(); it++)
+    std::list<struct pollfd>::iterator it;
+    for (it = this->_fds.begin(); it != this->_fds.end(); it++)
     {
         if ((*it).fd == -1)
         {
@@ -231,7 +256,7 @@ Server&			Server::operator*=(IRCMessage const& msg)
 
 struct pollfd *Server::operator[](unsigned long idx)
 {
-    return &this->_fds[idx];
+    return get(this->_fds, idx);
 }
 
 std::string Server::getPasswd()
@@ -253,8 +278,8 @@ Channel    *Server::getChannelByName(const std::string &name)
 {
     for (unsigned long i = 0; i < this->_channels.size(); i++)
     {
-        if (this->_channels[i].getChannelName() == name)
-            return &this->_channels[i];
+        if (get(this->_channels, i)->getChannelName() == name)
+            return get(this->_channels, i);
     }
     return (0);
 }
@@ -263,8 +288,8 @@ struct pollfd    *Server::getClientFdByNickName(const std::string &name)
 {
     for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        if (this->_clients[i].getNickName() == name)
-            return this->_clients[i].getFd();
+        if (get(this->_clients, i)->getNickName() == name)
+            return get(this->_clients, i)->getFd();
     }
     return (0);
 }
@@ -273,8 +298,8 @@ struct pollfd    *Server::getClientFdByRealName(const std::string &name)
 {
     for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        if (this->_clients[i].getRealName() == name)
-            return this->_clients[i].getFd();
+        if (get(this->_clients, i)->getRealName() == name)
+            return get(this->_clients, i)->getFd();
     }
     return (0);
 }
@@ -283,8 +308,8 @@ Client*    Server::getClientByNickName(const std::string &name)
 {
     for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        if (this->_clients[i].getNickName() == name)
-            return &this->_clients[i];
+        if (get(this->_clients, i)->getNickName() == name)
+            return get(this->_clients, i);
     }
     return (0);
 }
@@ -293,8 +318,8 @@ Client*    Server::getClientByRealName(const std::string &name)
 {
     for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        if (this->_clients[i].getRealName() == name)
-            return &this->_clients[i];
+        if (get(this->_clients, i)->getRealName() == name)
+            return get(this->_clients, i);
     }
     return (0);
 }
@@ -303,8 +328,8 @@ Client			*Server::getClientByFd(struct pollfd *fd)
 {
     for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        if (this->_clients[i].getFd() == fd)
-            return &this->_clients[i];
+        if (get(this->_clients, i)->getFd() == fd)
+            return get(this->_clients, i);
     }
     return (0);
 }
@@ -330,7 +355,7 @@ int Server::sendMsgAll(const std::string &msg)
 {
     for (unsigned long i = 0; i < this->_clients.size(); i++)
     {
-        send(this->_clients[i].getFd()->fd, msg.c_str(), msg.length(), 0);
+        send(get(this->_clients, i)->getFd()->fd, msg.c_str(), msg.length(), 0);
     }
     return 0;
 }
@@ -346,15 +371,15 @@ void Server::createChannel(const std::string &name)
 		//newChannel.setChannelModes(client);
 		this->_channels.push_back(newChannel);
 		std::cout << "DEBUG 1" << std::endl;
-		this->_channels[this->_channels.size() - 1] += client;
+		*get(this->_channels, this->_channels.size() - 1) += client;
 		std::cout << "DEBUG 2" << std::endl;
-		this->_channels[this->_channels.size() - 1].getModes()->chanCreator = client->getNickName();
+		get(this->_channels, this->_channels.size() - 1)->getModes()->chanCreator = client->getNickName();
 		std::cout << "DEBUG 3" << std::endl;
-		this->_channels[this->_channels.size() - 1].getModes()->topicLock = false;
+		get(this->_channels, this->_channels.size() - 1)->getModes()->topicLock = false;
 		std::cout << "DEBUG 4" << std::endl;
-		this->_channels[this->_channels.size() - 1].getOperators()->push_back(client);
+		get(this->_channels, this->_channels.size() - 1)->getOperators()->push_back(client);
 		std::cout << "DEBUG 5" << std::endl;
-		std::cout << this->_channels[this->_channels.size() - 1].getChannelName() << " created" << std::endl;
+		std::cout << get(this->_channels, this->_channels.size() - 1)->getChannelName() << " created" << std::endl;
 	}
 }
 
@@ -365,7 +390,7 @@ void Server::createClient(const std::string &nick, const std::string &real, stru
     newClient.setReal(real);
     newClient.setAdmin(false);
     this->_fds.push_back(fd);
-    newClient.setFd(&this->_fds[this->_fds.size() - 1]);
+    newClient.setFd(get(this->_fds, this->_fds.size() - 1));
     this->_clients.push_back(newClient);
 }
 
@@ -383,51 +408,32 @@ int Server::addClientToChannel(Client *client, Channel *channel)
     return -1;
 }
 
-Channel *Server::getChannelByClient(Client *client)
-{
-    for (unsigned long i = 0; i < this->_channels.size(); i++)
-    {
-        for (unsigned long j = 0; j < (*this->_channels[i].getClientsFromChannel()).size(); j++)
-        {
-            if ((*this->_channels[i].getClientsFromChannel())[j] == client)
-                return &this->_channels[i];
-        }
-    }
-    return 0;
-}
-
 int Server::removeClientFromChannel(Client *client, Channel *channel)
 {
     if (client != 0)
     {
-        std::deque<Client*> *clients = channel->getClientsFromChannel();
-        std::deque<Client*>::iterator it = std::find((*clients).begin(), (*clients).end(), client);
-        for (unsigned long i = 0; i < (*clients).size(); i++)
+        std::list<Client *> *listChan = channel->getClientsFromChannel();
+        std::list<Client *> *listOper = channel->getOperators();
+        for (unsigned long i = 0; i < listChan->size(); i++)
         {
-            if ((*clients)[i] == client)
+            if (*get(*listChan, i) == client)
             {
-                (*clients)[i] = 0;
+                deleteElementAtIndex(*listChan, i);
+                std::cout << "Borrado el cliente de lista del canal\n";
                 break;
             }
         }
-        if (it != (*clients).end())
-            (*clients).erase(std::remove((*clients).begin(), (*clients).end(), (Client*)0), (*clients).end());
-        if (client->isOperator())
+        for (unsigned long i = 0; i < listOper->size(); i++)
         {
-            std::deque<Client*> *admins = channel->getOperators();
-            std::deque<Client*>::iterator it2 = std::find((*admins).begin(), (*admins).end(), client);
-            for (unsigned long i = 0; i < (*admins).size(); i++)
+            if (*get(*listOper, i) == client)
             {
-                if ((*admins)[i] == client)
-                {
-                    (*admins)[i] = 0;
-                    break;
-                }
+                deleteElementAtIndex(*listOper, i);
+                std::cout << "Borrado el cliente de lista de operators\n";
+                break;
             }
-            if (it2 != (*admins).end())
-                (*admins).erase(std::remove((*admins).begin(), (*admins).end(), (Client*)0), (*admins).end());
         }
         return 0;
     }
     return -1;
 }
+
