@@ -96,13 +96,19 @@ void closeall(int signum)
 void Server::serverLoop()
 {
     signal(SIGINT, closeall);
-    int polVal, tmp_fd, counter;
+    int polVal, tmp_fd;
     while (1)
     {
         std::vector<struct pollfd> list = createVectorFromList(this->_fds);
         polVal = poll(list.data(), list.size(), -1);
+
+        if (polVal == -1)
+        {
+            std::cout << "Error reading poll." << std::endl;
+            break;
+        }
         Server::Singleton()[0]->events = POLLIN;
-        counter = Server::Singleton().getFdSize();
+        // counter = Server::Singleton().getFdSize();
         for (int i = 0; i < Server::Singleton().getFdSize(); i++)
         {
             Server::Singleton().setCurrentFd(Server::Singleton()[i]);
@@ -143,6 +149,11 @@ void Server::serverLoop()
                 char buffer[1024] = {0};
                 int recVal = 0;
                 recVal = recv(Server::Singleton()[i]->fd, buffer, sizeof(buffer), 0);
+                if (!recVal)
+                // TODO eliminal fd si recVal fall.
+                {
+                    break;
+                }
                 /*if (recVal < 0)
                 {
                     //Server::Singleton()[i]->fd = -1;

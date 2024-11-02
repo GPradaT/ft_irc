@@ -64,6 +64,11 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 			Server::Singleton().sendMsg(_client, " 475 " + _client->getNickName() + " " + str + ":Cannot join channel (+k)\r\n");
 			return false;
 		}
+		else if (chan->getClientsFromChannel()->size() >= (long unsigned int)chan->getLimit())
+		{
+			Server::Singleton().sendMsg(_client, " 471 :Cannot join channel (+l)");
+			return false;
+		}
 	}
 	Channel *chan = Server::Singleton().getChannelByName(str);
 	if (chan->getModes()->inviteOnly == false) //check channel permissions;
@@ -80,7 +85,7 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 	{
 		if (!chan->isInvited(_client->getNickName()))
 		{
-			Server::Singleton().sendMsg(_client, "ERR_INVITEONLYCHAN :You are not invited!\r\n");
+			Server::Singleton().sendMsg(_client, " 473 :You are not invited!\r\n");
 			return false;
 		}
 		else
@@ -88,13 +93,6 @@ bool	ChnlJoinCmd::validate(IRCMessage const&msg)
 			if (chan->getClientByNickName(_client->getNickName()) == 0)
 				*chan += _client;
 		}
-		/* Esta numeric reply nose si deberia usarse.
-        471     ERR_CHANNELISFULL
-                        "<channel> :Cannot join channel (+l)"
-		Y a esta me espero a la lista de invitados.
-        473     ERR_INVITEONLYCHAN
-                        "<channel> :Cannot join channel (+i)"
-		*/
 		
 	}
 	execute(_client, msg);
